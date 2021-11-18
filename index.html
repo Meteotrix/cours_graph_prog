@@ -1,0 +1,79 @@
+<html>
+<head>
+<title> recap exam gprog 2021-2022 </title>
+<style>
+img {
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	height: 500px;
+}
+</style>
+</head>
+<body> <!-- ////////////////////////////////////////////// -->
+<!--<h1> A </h1>
+
+<ul>
+	<li> a </li>
+	<li> 
+		<ul>
+			<li> a </li>
+			<li> b </li>
+		</ul> 
+	</li>
+</ul>-->
+<h2> Render Pipeline </h2>
+<pre>
+Les étapes principales de rendu sont:
+	1) Description de scène / Vertex Data
+	2) (Gestion de topologie - Hull shaders / Domain shaders / Geometry shaders)
+	3) Vertex Shading + Projection
+	4) Rasterization
+	5) Fragment Shading
+	6) Merging
+	<!--<img src="az.png"> <img src="ae.png"> <img src="ar.png">-->
+	
+Vertex Data (en object space)
+	-positions
+	-normals
+	-tangents
+	-UVs
+	-vertex color
+	-...
+
+Vertex Shading 
+	-Projection
+		Object space -> World space -> View space -> Clip space
+		
+Rasterization
+	-Clip space -> Screen space
+	-interpolation barycentrique de propriétés de vertices pour chaque fragment de la surface d'un triangle
+	
+Fragment shading
+	-Couleur
+		-Textures
+		-Lumière
+	-Transparence
+		-Textures
+		-Type de shader (Opaque, Opaque avec AlphaClip, Transparent)
+		-Type de blending (Alpha blend, Additif, Multiplication, ...)
+	-Propriétés PBR
+		-Smoothness/Roughness
+		-Metalness
+		-Emission
+		...
+	
+Merging
+	combinaison des fragments pour obtenir la couleur finale des pixels
+</pre>
+<h2> B2 </h2>
+<pre>
+b
+	b
+	b
+	
+	<img src="az.png"> <img src="ae.png"> <img src="ar.png">
+	
+</pre>		
+</body>
+</html>
