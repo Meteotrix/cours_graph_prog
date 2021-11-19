@@ -30,216 +30,359 @@ pre {
 </ul>-->
 <h1>Recap Programmation Graphique</h1>
 <pre>
-Plan:
-	-Infos cours
-		-Prof
-			-Contact
-				//Email (page publique)
-				//Discords (page publique)
-			-Parcours
-			-Jeux et franchises préférés
-				-Warcraft
-				-Final Fantasy / Kingdom Hearts
-				-Megaman
-				-Might & Magic 6,7,8
-				-Quake
-				-Overwatch
-				-Half-Life
-				-F-Zero
-				-Zelda
-				-Metroid
-				-...
-		-Évaluation
-		-Références
-	-Théorie
-		-Les render pipelines
-			-Pipelines fixes vs programmables
-				-shaders définition
-					-familles de shaders
-				-materials définition
-			-Scènes et objets
-			-Render loop
-				-Refresh
-				-Draw calls
-					-Batching
-			-Vertex properties
-				-position
-				-normales
-				-tangentes
-				-UVs
-				-vertex color
-				-...
-			-(Gestion de topologie - Hull shaders / Domain shaders / Geometry shaders)
-			-Vertex shading
+Les infos sur cette page sont à destination à la fois du cours de prog graphique des game progs et de math1 des game artists
+<h2>Infos cours</h2>
+-Évaluations
+	-infos sur google drive
+	
+-Références //dispos sur drive ou par demande mail / discord
+	2019-2021
+		-math1 B3 2019-2020
+			-dossier drive
+				-docs écrits (obsolètes avec des erreurs)
+		-math1 B2 2019-2021
+			-dossier drive
+				-google site
+				-vidéos de cours (intro manquante)
+			-VODs youtube de cours de math1 2020-2021
+		-animation procédurale 2019-2021
+			-dossier drive
+				-google site
+					recap minimal de cours seulement, incomplet
+			-VODs youtube de cours d'animation procédurale 2020-2021
+		-level design procédural B3 2020-2021
+			-dossier drive
+				-google site 
+					-recap minimal de cours seulement, incomplet
+				-projet + guide d'utilisation
+	2021-2022
+		-graph prog 
+			-dossier drive
+				-bibliographie du cours de graph prog
+		-math2
+			-dossier drive
+				-recap minimal de cours seulement, incomplet
+	
+
+<h2>Les render pipelines</h2>
+-Pipelines fixes vs programmables
+	-shaders définition
+		-familles de shaders
+	-materials définition
+	-applications courantes
+-Scènes et objets
+-Render loop
+	-Refresh
+	-Draw calls
+		-Batching
+-Vertex properties
+	-position
+	-normales
+	-tangentes
+	-UVs
+	-vertex color
+	-...
+-(Gestion de topologie - Hull shaders / Domain shaders / Geometry shaders)
+-Vertex shading
+	-Projection
+		-Espaces / repères 3D
+			-ex: Héliocentrisme vs Géocentrisme
+			-Origines
+			-Axes
+				-Conventions
+					-Y vertical vs Z vertical
+					-Profondeur avec Z+ ou Z-
+						-Handedness / repères main-gauche vs main-droite
+			-Object Space
+				-Origine/Pivot vs Centre
+				-Objet vs Géométrie
+				-Parenting
+			-World Space
+			-View Space
+			-Clip Space
+				-Camera
+					-Planes
+						-Near
+						-Far
+						-Left, Right, Top, Bottom
+					-Types de projection
+						-Perspective
+						-Orthographique
+						-Autres
+							-...
+					-Projection
+						-Théorème de Thalès
+						-Matrices (cf plus loin)
+			-Screen Space
+				en fait la projection entre clip et screen space est faite pendant la rasterization
+		
+		-Transforms
+			-Ré-exprimer un vecteur dans un autre repère
+			-Appliquer des transforms
+				-Translation
+				-Rotation
+				-Scaling
+				-(Shearing)
 				-Projection
-					-Espaces / repères 3D
-						-ex: Héliocentrisme vs Géocentrisme
-						-Origines
-						-Axes
-							-Conventions
-								-Y vertical vs Z vertical
-								-Profondeur avec Z+ ou Z-
-									-Handedness / repères main-gauche vs main-droite
-						-Object Space
-							-Origine/Pivot vs Centre
-							-Objet vs Géométrie
-							-Parenting
-						-World Space
-						-View Space
-						-Clip Space
-							-Camera
-								-Planes
-									-Near
-									-Far
-									-Left, Right, Top, Bottom
-								-Types de projection
-									-Perspective
-									-Orthographique
-									-Autres
-										-...
-								-Projection
-									-Théorème de Thalès
-									-Matrices (cf plus loin)
-						-Screen Space
-							en fait la projection entre clip et screen space est faite pendant la rasterization
-					
-					-Transforms
-						-Ré-exprimer un vecteur dans un autre repère
-						-Appliquer des transforms
-							-Translation
-							-Rotation
-							-Scaling
-							-(Shearing)
-							-Projection
-						-Matrices
-							-Signification et Construction
-								-Dans notre case, on liste les vecteurs qui sont les axes d'un espace
-							-Multiplication
-								-Aide visuelle
-								-Opérations
-								-Piège avec l'ordre des termes
-								-Avoir le même nombre de colonnes à gauche que de lignes à droite
-						-Matrices de transformation
-							-Piège de la contravariance
-							-Inverser des matrices
-								-Résolution d'équations
-								-Manuellement
-									-Inverser la translation
-									-Transposer la rotation
-							-Transposer des matrices
-						-Vecteurs position vs Vecteurs direction
-							-Coordonnées Homogènes W						
-			-Rasterization
-				-Clip space -> Screen space
-				-interpolation barycentrique de propriétés de vertices pour chaque fragment de la surface d'un triangle
-			-Fragment shading
-				-Couleur
-					-Textures
-					-Lumière
-				-Transparence
-					-Textures
-					-Type de shader (Opaque, Opaque avec AlphaClip, Transparent)
-					-Type de blending (Alpha blend, Additif, Multiplication, ...)
-				-Propriétés PBR
-					-Smoothness/Roughness
-					-Metalness
-					-Emission
-				-Tri
-					-Depth Testing
-			-Merging
-				-combinaison des fragments pour obtenir la couleur finale des pixels
-	-Pratique
-		-ShaderGraph
-			-Installation
-				-Création de projet Unity avec le template URP
-				-Package manager
-				-Asset de pipeline
-					-Créer
-					-Donner au projet
-					-Setup la Opaque Texture et la Depth Texture
-				-Update les materials
-				-...
-			-Workflow de création
-				-Créer asset > Shader > Universal Render Pipeline > Unlit Shader Graph
-				-Faire des modifs dans le shader
-				-Save Asset
-				-Créer un Material
-					-Soit séparement
-						-Drag le shader sur le material
-					-Soit en créant à partir de clic droit sur l'asset shader
-				-Placer le material sur un game object
-				-Cocher Always Refresh pour les shaders animés
-			-Interface
-				-Naviguer à la souris
-					-clic molette pour déplacer la caméra
-				-Preview
-					-clic droit set mesh
-					-Ça casse facilement
-				-Master
-					-Section Fragment
-					-Section Vertex
-				-Graph Inspector
-				-Blackboard & properties externes
-					-Valeurs par défaut
-						-Piège de priorité
-					-Name vs Reference
-					-
-				-Ports et cables
-					-nombre de cases
-				-Vecteurs XYZ, RGB
-				-Créer des nodes
-					-Espace
-					-Clic droit > Create node
-				
-				
-		-ShaderLab
-			-Workflow de création
-				-pipeline built-in vs URP vs HDRP
-			-Structure des fichiers
-			-...
+			-Matrices
+				-Signification et Construction
+					-Dans notre case, on liste les vecteurs qui sont les axes d'un espace
+				-Multiplication
+					-Aide visuelle
+					-Opérations
+					-Piège avec l'ordre des termes
+					-Avoir le même nombre de colonnes à gauche que de lignes à droite
+			-Matrices de transformation
+				-Piège de la contravariance
+				-Inverser des matrices
+					-Résolution d'équations
+					-Manuellement
+						-Inverser la translation
+						-Transposer la rotation
+				-Transposer des matrices
+			-Vecteurs position vs Vecteurs direction
+				-Coordonnées Homogènes W						
+//Rasterization
+	-Clip space -> Screen space
+	-test d'inclusion de pixel dans un triangle
+		-coordonnées barycentriques
+			-calcul d'aires de sous-triangles
+				-cross product / produit vectoriel
+		-détection d'aires "négatives"
+	-interpolation barycentrique de propriétés de vertices pour chaque fragment de la surface d'un triangle
+-Fragment shading
+	-Couleur
+		-Textures
+		-Lumière
+	-Transparence
+		-Textures
+		-Type de shader (Opaque, Opaque avec AlphaClip, Transparent)
+		-Type de blending (Alpha blend, Additif, Multiplication, ...)
+	-Propriétés PBR
+		-Smoothness/Roughness
+		-Metalness
+		-Emission
+	-Tri
+		-Depth Testing
+-Merging
+	-combinaison des fragments pour obtenir la couleur finale des pixels
+
+<h2>Versions de Unity</h2>
+-La version actuelle des cours se passe sur 2021.1
+	
+<h2>ShaderGraph</h2>
+//todo
+-Pipeline built-in vs URP vs HDRP
+		//todo
+-Installation
+	-Création de projet Unity avec le template URP
+		normalement ça setup tout correctement par défaut
+		<img src="./creation projet template urp.png" alt=" ">
+	-Sinon:
+		-Package manager
+			-s'assurer d'avoir installé:
+				-Core RP Library
+				-Universal RP
+				-Shader Graph
+			-Les packages installés sont pas tous listés au même endroit, vérifier dans: 
+				-Unity Registry
+				-In Project
+				//todo add screenshot
+		-Asset de pipeline
+			-Créer via Assets > Create > Rendering > Universal Render Pipeline > Pipeline Asset
+			-Donner au projet via Edit > Project Setting > Graphics > le premier champ
+			-Setup la Opaque Texture et la Depth Texture
+				-Dans un projet à template URP, on a un Pipeline Asset déjà créé, cf UniversalRP-HighQuality
+				-sur le Pipeline Asset, cocher Depth Texture et Opaque Texture
+					-ça sera nécessaire pour faire fonctionner les nodes Scene Color et Scene Depth, mais aussi pour faire fonctionner 
+						sampler2D _CameraOpaqueTexture;
+						sampler2D _CameraDepthTexture;
+		-Update les materials
+		-...
+	-Créer une nouvelle scène vide et travailler dedans
+		-des fois la scène par défaut peut interférer avec ce qu'on fait
+-Workflow de création
+	-Créer asset > Shader > Universal Render Pipeline > Unlit Shader Graph
+	-Faire des modifs dans le shader
+	-Save Asset
+	-Créer un Material
+		-Soit séparement
+			-Drag l'asset shader sur l'asset material
+		-Soit en créant à partir de clic droit sur l'asset shader
+	-Placer le material sur un game object
+		-avec un drag and drop ça marche
+	-Cocher Always Refresh pour les shaders animés
+		//todo screenshot
+-Interface
+	-Naviguer à la souris
+		-clic molette pour déplacer la caméra
+	-Preview
+		-clic droit set mesh
+		-Ça casse facilement
+	-Master
+		-Section Fragment
+		-Section Vertex
+	-Graph Inspector
+	-Blackboard & properties externes
+		-Valeurs par défaut
+			-Piège de priorité
+		-Name vs Reference
+		-
+	-Ports et cables
+		-nombre de cases
+	-Vecteurs XYZ, RGB
+	-Créer des nodes
+		-Espace
+		-Clic droit > Create node
+		
+<h2>ShaderLab</h2>
+//todo
+-Workflow de création
+	//todo
+	-pipeline built-in vs URP vs HDRP
+		//todo
+		//todo poster le lien vers le template URP
+-Structure des fichiers
+	//todo
+//todo	
+
+<h2>Shaders de debug</h2>
+//todo
+-node Position
+	//todo
+-node UV
+	//todo
+-node Normal Vector
+	//todo
+-node Screen Position
+	//todo
+-node Vertex Color
+	//todo
+//todo
+
+<h2>Texturing</h2>
+//todo
+-node Sample Texture 2D
+	//todo
+-node Tiling & Offset
+	//todo
+-node Sampler State				
+	//todo
+
+<h2>Animations</h2>
+//todo
+-node Time
+	//todo
+	-float precision
+		//todo
+		-video minecraft
+			//todo
+-Scrolling UVs
+	//todo
+-Luminosité et contraste
+	//todo
+	-Multiply
+		//todo
+	-Power
+		//todo
+-Contrôle externe
+	//todo
+	-Depuis la fenêtre animation
+		//todo
+	-Depuis un script
+		//todo
+-Texture flipbook
+	//todo
+//todo
+		
+<h2>Éclairage direct</h2>
+//todo
+-Phong shading
+	//todo
+	-éclairage oldschool
+		//todo
+	-Réflexions diffuses
+		//todo
+		-dot product / produit scalaire
+			//todo
+	-Réflexions spéculaires
+		//todo
+	-Réflexions ambiantes
+		//todo
+-Ombres
+	//todo
+-Lumières multiples
+	//todo
+//todo
+		
+<h2>Cel Shading</h2>
+//todo
+-exemples
+	-Zelda WindWaker
+		//todo
+	-DBZ Budokai
+		//todo
+-Posterization
+	//todo
+	-node Posterize
+		//todo
+	-Manuellement
+		//todo
+		-Floor()
+			//todo
+		-Ceil()
+			//todo
+		-Round()
+			//todo
+//todo
 			
-		-Exemples concrets
-			-Shaders de debug
-				-node Position
-				-node UV
-				-node Normal Vector
-				-node Screen Position
-				-node Vertex Color
-				-...
-			-Texturing
-				-node Sample Texture 2D
-				-node Tiling & Offset
-				-node Sampler State				
-			-Animations
-				-node Time
-					-float precision
-						-video minecraft
-				-Scrolling UVs
-				-Luminosité et contraste
-				-Contrôle externe
-					-Depuis la fenêtre animation
-					-Depuis un script
-						//todo
-				-Texture flipbook					
-			-Éclairage direct
-				-Phong shading
-					-Réflexions diffuses
-					-Réflexions spéculaires
-					-Réflexions ambiantes
-				-Ombres
-					//todo
-				-Lumières multiples
-					//todo
-			-Cel Shading
-			-Outlines
-			-Dithering
-			-Eau
-				-Reflection probes
-				-Refraction
-					-Opaque Texture / node Scene Color
-				-Absorption
-					-Depth Texture / node Scene Depth
-				-Vertex Displacement
+<h2>Outlines</h2>
+//todo
+-exemples
+	-Okami
+		//todo
+-Rendu multipasses
+	//todo
+-Vertex Displacement
+	//todo
+	-Normales lissées vs éclatement des faces
+		//todo
+		-Cas des meshs à facettes apparentes
+			//todo
+	-compenser pour la perspective
+		//todo
+-masquer les front faces
+	//todo
+	-node IsFrontFace
+		//todo
+	-node Branch
+		//todo
+-afficher les backfaces
+	//todo
+	-Cull Front dans ShaderLab
+		//todo
+	-Two-Sided dans ShaderGraph
+		//todo
+//todo
+		
+<h2>Dithering</h2>
+//todo
+	
+<h2>Eau</h2>
+//todo
+-Reflection probes
+	//todo
+-Refraction
+	-Opaque Texture / node Scene Color
+		//todo
+	//todo
+-Absorption
+	-Depth Texture / node Scene Depth
+		//todo
+	//todo
+-Vertex Displacement
+	//todo
+//todo
 </pre>
 <!--<h2> B2 </h2>
 <pre>
