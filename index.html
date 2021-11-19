@@ -341,6 +341,32 @@ Cette série d'étapes de calculs c'est ce qu'on appelle le pipeline graphique.
 	-node Simple noise / Gradient noise
 	-node Voronoi
 	
+<h2>Couleur et Luminosité</h2>
+-multiplier une texture monochrome avec une couleur
+	-canal par canal
+		-rgba1 * rgba2 = r1 * r2, g1 * g2, b1 * b2, a1 * a2.
+	-le node multiply s'adapte au nombre de cases qu'on lui fournit en entrée
+-différence entre valeurs linéaires et valeurs couleur avec correction gamma
+	-shader graph fait la distinction entre les valeurs couleur
+		et les valeurs non-couleur, dites "linéaires".
+	-les valeurs linéaires sont des valeurs qui augmentent en ligne droite
+		-par exemple on peut compter des photons, c'est une mesure objective,
+			-et on peut avoir N photons, ou 2N photons, etc.
+	-à l'inverse, notre perception n'est pas linéaire
+		-donc ça rend les calculs plus compliqués
+	-le problème c'est qu'on voit trop bien dans le noir
+	<img src="./Linear-vs-gamma-corrected.png" alt=" ">
+	-ça fait que si on traitait des palettes de gris avec des valeurs équilibrées,
+	on les verrait déséquilibrées, avec trop de gris clair et pas assez de noirs
+	-on compense en assombrissant nos valeurs de luminosité
+	-on assombrit le contraste de nos valeurs avec une puissance (au sens mathématique, donc x², etc.)
+	-c'est cette variable puissance qu'on appelle gamma
+	-le standard sRGB utilise une puissance de 2.2 pour appliquer l'encodage gamma
+	-et puissance 0.45 pour appliquer le décodage gamma
+	-x puissance 2.2 donne des valeurs plus sombres, càd plus basses, 
+		-parce que nos valeurs viennent de l'intervalle entre 0 et 1.
+		-les puissances ont l'effet inverse sur des valeurs entre 0 et 1.
+	
 
 <h2>Animations</h2>
 //todo
