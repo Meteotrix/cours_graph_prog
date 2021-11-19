@@ -10,6 +10,10 @@ img {
 	border-color: black;
 	height: 500px;
 }
+pre {
+	font-size: 17px;
+	tab-size: 4;
+}
 </style>
 </head>
 <body> <!-- ////////////////////////////////////////////// -->
@@ -25,6 +29,7 @@ img {
 	</li>
 </ul>-->
 <h1>Recap Programmation Graphique</h1>
+<pre>
 Plan:
 	-Infos cours
 		-Prof
@@ -58,6 +63,13 @@ Plan:
 				-Draw calls
 					-Batching
 			-Vertex properties
+				-position
+				-normales
+				-tangentes
+				-UVs
+				-vertex color
+				-...
+			-(Gestion de topologie - Hull shaders / Domain shaders / Geometry shaders)
 			-Vertex shading
 				-Projection
 					-Espaces / repères 3D
@@ -75,7 +87,22 @@ Plan:
 						-World Space
 						-View Space
 						-Clip Space
+							-Camera
+								-Planes
+									-Near
+									-Far
+									-Left, Right, Top, Bottom
+								-Types de projection
+									-Perspective
+									-Orthographique
+									-Autres
+										-...
+								-Projection
+									-Théorème de Thalès
+									-Matrices (cf plus loin)
 						-Screen Space
+							en fait la projection entre clip et screen space est faite pendant la rasterization
+					
 					-Transforms
 						-Ré-exprimer un vecteur dans un autre repère
 						-Appliquer des transforms
@@ -103,8 +130,24 @@ Plan:
 						-Vecteurs position vs Vecteurs direction
 							-Coordonnées Homogènes W						
 			-Rasterization
+				-Clip space -> Screen space
+				-interpolation barycentrique de propriétés de vertices pour chaque fragment de la surface d'un triangle
 			-Fragment shading
+				-Couleur
+					-Textures
+					-Lumière
+				-Transparence
+					-Textures
+					-Type de shader (Opaque, Opaque avec AlphaClip, Transparent)
+					-Type de blending (Alpha blend, Additif, Multiplication, ...)
+				-Propriétés PBR
+					-Smoothness/Roughness
+					-Metalness
+					-Emission
+				-Tri
+					-Depth Testing
 			-Merging
+				-combinaison des fragments pour obtenir la couleur finale des pixels
 	-Pratique
 		-ShaderGraph
 			-Installation
@@ -155,58 +198,56 @@ Plan:
 			-Structure des fichiers
 			-...
 			
-
-<h2> Render Pipeline </h2>
-<pre>
-Les étapes principales de rendu sont:
-	1) Description de scène / Vertex Data
-	2) (Gestion de topologie - Hull shaders / Domain shaders / Geometry shaders)
-	3) Vertex Shading + Projection
-	4) Rasterization
-	5) Fragment Shading
-	6) Merging
-	<!--<img src="az.png"> <img src="ae.png"> <img src="ar.png">-->
-	
-Vertex Data (en object space)
-	-positions
-	-normals
-	-tangents
-	-UVs
-	-vertex color
-	-...
-
-Vertex Shading 
-	-Projection
-		Object space -> World space -> View space -> Clip space
-		
-Rasterization
-	-Clip space -> Screen space
-	-interpolation barycentrique de propriétés de vertices pour chaque fragment de la surface d'un triangle
-	
-Fragment shading
-	-Couleur
-		-Textures
-		-Lumière
-	-Transparence
-		-Textures
-		-Type de shader (Opaque, Opaque avec AlphaClip, Transparent)
-		-Type de blending (Alpha blend, Additif, Multiplication, ...)
-	-Propriétés PBR
-		-Smoothness/Roughness
-		-Metalness
-		-Emission
-		...
-	
-Merging
-	combinaison des fragments pour obtenir la couleur finale des pixels
+		-Exemples concrets
+			-Shaders de debug
+				-node Position
+				-node UV
+				-node Normal Vector
+				-node Screen Position
+				-node Vertex Color
+				-...
+			-Texturing
+				-node Sample Texture 2D
+				-node Tiling & Offset
+				-node Sampler State				
+			-Animations
+				-node Time
+					-float precision
+						-video minecraft
+				-Scrolling UVs
+				-Luminosité et contraste
+				-Contrôle externe
+					-Depuis la fenêtre animation
+					-Depuis un script
+						//todo
+				-Texture flipbook					
+			-Éclairage direct
+				-Phong shading
+					-Réflexions diffuses
+					-Réflexions spéculaires
+					-Réflexions ambiantes
+				-Ombres
+					//todo
+				-Lumières multiples
+					//todo
+			-Cel Shading
+			-Outlines
+			-Dithering
+			-Eau
+				-Reflection probes
+				-Refraction
+					-Opaque Texture / node Scene Color
+				-Absorption
+					-Depth Texture / node Scene Depth
+				-Vertex Displacement
 </pre>
-<h2> B2 </h2>
+<!--<h2> B2 </h2>
 <pre>
 b
 	b
 	b
 	
-	<img src="./az.PNG" alt=" "> <img src="./ae.PNG" alt=" "> <!-- <img src="./ar.PNG" alt=" "> -->
+	<img src="./az.PNG" alt=" "> <img src="./ae.PNG" alt=" ">  <img src="./ar.PNG" alt=" "> -->
 	
 </pre>		
 </body>
