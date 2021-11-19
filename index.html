@@ -31,50 +31,104 @@ pre {
 <h1>Recap Programmation Graphique</h1>
 <pre>
 Les infos sur cette page sont à destination à la fois du cours de prog graphique des game progs et de math1 des game artists
-<h2>Infos cours</h2>
--Évaluations
-	-infos sur google drive
-	
--Références //dispos sur drive ou par demande mail / discord
-	2019-2021
-		-math1 B3 2019-2020
-			-dossier drive
-				-docs écrits (obsolètes avec des erreurs)
-		-math1 B2 2019-2021
-			-dossier drive
-				-google site
-				-vidéos de cours (intro manquante)
-			-VODs youtube de cours de math1 2020-2021
-		-animation procédurale 2019-2021
-			-dossier drive
-				-google site
-					recap minimal de cours seulement, incomplet
-			-VODs youtube de cours d'animation procédurale 2020-2021
-		-level design procédural B3 2020-2021
-			-dossier drive
-				-google site 
-					-recap minimal de cours seulement, incomplet
-				-projet + guide d'utilisation
-	2021-2022
-		-graph prog 
-			-dossier drive
-				-bibliographie du cours de graph prog
-		-math2
-			-dossier drive
-				-recap minimal de cours seulement, incomplet
-	
+<h2>Ressources</h2>
+dispos sur drive ou par demande mail / discord.
 
+2021-2022
+	-graph prog 
+		-dossier drive "Graph Prog B3GP 2021-22"
+			-assets
+			-bibliographie du cours de graph prog
+	-math1 
+		-dossier drive "Math1 B2GA 2021-22"
+			-recap minimal de cours seulement, incomplet
+	-math2
+		-dossier drive "Math2 B3GA 2021-22"
+			-assets
+			-screenshots
+			-recap minimal de cours seulement, incomplet
+2019-2021
+	-math1 B3 2019-2020 
+		-dossier drive "Shadergraph B3GA 2019-2020"
+			-docs écrits (obsolètes avec des erreurs)
+			-assets
+			-screenshots
+	-math1 B2 2019-2021
+		-dossier drive "Shadergraph B2GA"
+			-google site
+			-vidéos de cours, assez courtes (intro manquante)
+			-assets
+			-screenshots
+		-VODs youtube de cours complètes de math1 2020-2021
+	-animation procédurale 2019-2021
+		-dossier drive "Proc Anim"
+			-google site
+				recap minimal de cours seulement, incomplet
+			-assets
+			-screenshots
+		-VODs youtube de cours complètes d'animation procédurale 2020-2021
+	-level design procédural B3 2020-2021
+		-dossier drive "Proc LD B3 2020-2021"
+			-google site 
+				-bibliographie
+				-recap minimal de cours seulement, incomplet
+			-projet + guide d'utilisation
+			
+<h2>Versions de Unity</h2>
+-La version actuelle des cours se passe sur 2021.1
+			
 <h2>Les render pipelines</h2>
+
+Le rendu consiste à obtenir l'image d'une scène du point de vue d'une caméra.
+Le rendu est effectué par une série de calculs à partir des données de notre scène.
+Cette série d'étapes de calculs c'est ce qu'on appelle le pipeline graphique.
+
 -Pipelines fixes vs programmables
+	Anciennement, les pipelines étaient configurables, mais pas programmables, et donc on avait pas beaucoup de flexibilité dans le déroulement du rendu. 
+	De nos jours on a l'option d'insérer des scripts dans le pipeline de rendu pour contrôler certaines étapes.
+	La dernière console à avoir un pipeline fixe était la Wii (2006).
 	-shaders définition
+		Ces scripts qui permettent de contrôler le rendu de nos objets, on appelle ça des shaders.
+		On peut typiquement contrôler la forme des objets, leur éclairage, couleur et transparence. Vertex par vertex, mais aussi pixel par pixel.
 		-familles de shaders
+			On peut regrouper les shaders courants en plusieurs familles:
+				-shaders de debug
+					//todo
+				-shaders "réalistes" old-school, donc par si réalistes que ça
+					//todo
+				-shaders réalistes modernes, qui suivent le principe du Physically-Based Rendering (PBR)
+					//todo
+				-shaders non-réalistes, souvent stylisés, cartoon, dits NPR (Non-Photo-Realistic)
+					//todo
+				-autres shaders, souvent pour des effets spécifiques.
+					//todo
 	-materials définition
 	-applications courantes
 -Scènes et objets
+	-Pour simplifier, on suppose généralement qu'une scène est une liste d'objets visibles,
+	et que les objets sont des listes de triangles.
+	-À leur tour les triangles sont un trio de vertices qui ont des propriétés.
 -Render loop
+	Pour faire le rendu d'une scène en temps réel, typiquement on calcule plusieurs images par seconde, typiquement 60 par seconde, 
+	mais ça dépend de la fréquence d'affichage de l'écran, on a souvent 120fps de nos jours par exemple.
+	
 	-Refresh
+		//todo
+		-Front buffer & Back buffer
+			//todo
+		-VSync
+			//todo
+			-Tear lines
+				//todo
 	-Draw calls
+		Ce qui est envoyé dans le pipeline de rendu c'est typiquement une liste de vertices, qui vont constituer nos triangles. 
+		Ils peuvent aussi consistuer d'autres types de primitives, comme des lignes, des éventails de triangles, mais on va pas s'y intéresser. 
+		Ces vertice sont donnés au pipeline avec leurs propriétés (position, UVs, normales, etc.). 
+		À chaque fois qu'on envoie des vertices dans le pipeline, ça s'appelle un draw call (en interne, le moteur appelle la fonction Draw(), qui prend nos vertices et les passe à la carte graphique).
 		-Batching
+			Pour des raisons de performance, on a tendance à grouper les vertices qui ont le même material avant de les envoyer dans le pipeline, même si ces vertices appartiennent à des meshs différents. On appelle ça le batching ("batch" veut dire "fournée" en anglais, cf faire des cookies au four). Ça permet de réduire le nombre de draw calls.
+	-(Forward Rendering vs Deferred Rendering)
+		//todo
 -Vertex properties
 	-position
 	-normales
@@ -166,9 +220,6 @@ Les infos sur cette page sont à destination à la fois du cours de prog graphiq
 		-Depth Testing
 -Merging
 	-combinaison des fragments pour obtenir la couleur finale des pixels
-
-<h2>Versions de Unity</h2>
--La version actuelle des cours se passe sur 2021.1
 	
 <h2>ShaderGraph</h2>
 //todo
@@ -191,6 +242,7 @@ Les infos sur cette page sont à destination à la fois du cours de prog graphiq
 		-Asset de pipeline
 			-Créer via Assets > Create > Rendering > Universal Render Pipeline > Pipeline Asset
 			-Donner au projet via Edit > Project Setting > Graphics > le premier champ
+				//todo add screenshot
 			-Setup la Opaque Texture et la Depth Texture
 				-Dans un projet à template URP, on a un Pipeline Asset déjà créé, cf UniversalRP-HighQuality
 				-sur le Pipeline Asset, cocher Depth Texture et Opaque Texture
@@ -198,13 +250,17 @@ Les infos sur cette page sont à destination à la fois du cours de prog graphiq
 						sampler2D _CameraOpaqueTexture;
 						sampler2D _CameraDepthTexture;
 		-Update les materials
-		-...
+			//todo
+		//todo
 	-Créer une nouvelle scène vide et travailler dedans
 		-des fois la scène par défaut peut interférer avec ce qu'on fait
 -Workflow de création
-	-Créer asset > Shader > Universal Render Pipeline > Unlit Shader Graph
+	-Créer Asset > Shader > Universal Render Pipeline > Unlit Shader Graph
+	-Ouvrir le shader avec un double clic sur l'asset
 	-Faire des modifs dans le shader
 	-Save Asset
+		-en haut à gauche de la fenêtre de shadergraph
+		//todo add screenshot
 	-Créer un Material
 		-Soit séparement
 			-Drag l'asset shader sur l'asset material
@@ -216,25 +272,37 @@ Les infos sur cette page sont à destination à la fois du cours de prog graphiq
 -Interface
 	-Naviguer à la souris
 		-clic molette pour déplacer la caméra
+		//todo
 	-Preview
 		-clic droit set mesh
 		-Ça casse facilement
 	-Master
 		-Section Fragment
+			//todo
 		-Section Vertex
+			//todo
 	-Graph Inspector
+		//todo
 	-Blackboard & properties externes
+		//todo
 		-Valeurs par défaut
+			//todo
 			-Piège de priorité
+				//todo
 		-Name vs Reference
-		-
+			//todo
+		//todo
 	-Ports et cables
+		//todo
 		-nombre de cases
-	-Vecteurs XYZ, RGB
+			//todo
+		-Vecteurs XYZ, RGB
+			//todo
 	-Créer des nodes
 		-Espace
 		-Clic droit > Create node
-		
+	//todo
+	
 <h2>ShaderLab</h2>
 //todo
 -Workflow de création
@@ -370,6 +438,13 @@ Les infos sur cette page sont à destination à la fois du cours de prog graphiq
 	
 <h2>Eau</h2>
 //todo
+-sur le Pipeline Asset, cocher Depth Texture et Opaque Texture
+	-ça sera nécessaire pour faire fonctionner les nodes 
+		-Scene Color 
+		-Scene Depth, 
+	mais aussi pour faire fonctionner 
+		sampler2D _CameraOpaqueTexture;
+		sampler2D _CameraDepthTexture;
 -Reflection probes
 	//todo
 -Refraction
