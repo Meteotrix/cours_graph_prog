@@ -24,6 +24,138 @@ img {
 		</ul> 
 	</li>
 </ul>-->
+<h1>Recap Programmation Graphique</h1>
+Plan:
+	-Infos cours
+		-Prof
+			-Contact
+				//Email (page publique)
+				//Discords (page publique)
+			-Parcours
+			-Jeux et franchises préférés
+				-Warcraft
+				-Final Fantasy / Kingdom Hearts
+				-Megaman
+				-Might & Magic 6,7,8
+				-Quake
+				-Overwatch
+				-Half-Life
+				-F-Zero
+				-Zelda
+				-Metroid
+				-...
+		-Évaluation
+		-Références
+	-Théorie
+		-Les render pipelines
+			-Pipelines fixes vs programmables
+				-shaders définition
+					-familles de shaders
+				-materials définition
+			-Scènes et objets
+			-Render loop
+				-Refresh
+				-Draw calls
+					-Batching
+			-Vertex properties
+			-Vertex shading
+				-Projection
+					-Espaces / repères 3D
+						-ex: Héliocentrisme vs Géocentrisme
+						-Origines
+						-Axes
+							-Conventions
+								-Y vertical vs Z vertical
+								-Profondeur avec Z+ ou Z-
+									-Handedness / repères main-gauche vs main-droite
+						-Object Space
+							-Origine/Pivot vs Centre
+							-Objet vs Géométrie
+							-Parenting
+						-World Space
+						-View Space
+						-Clip Space
+						-Screen Space
+					-Transforms
+						-Ré-exprimer un vecteur dans un autre repère
+						-Appliquer des transforms
+							-Translation
+							-Rotation
+							-Scaling
+							-(Shearing)
+							-Projection
+						-Matrices
+							-Signification et Construction
+								-Dans notre case, on liste les vecteurs qui sont les axes d'un espace
+							-Multiplication
+								-Aide visuelle
+								-Opérations
+								-Piège avec l'ordre des termes
+								-Avoir le même nombre de colonnes à gauche que de lignes à droite
+						-Matrices de transformation
+							-Piège de la contravariance
+							-Inverser des matrices
+								-Résolution d'équations
+								-Manuellement
+									-Inverser la translation
+									-Transposer la rotation
+							-Transposer des matrices
+						-Vecteurs position vs Vecteurs direction
+							-Coordonnées Homogènes W						
+			-Rasterization
+			-Fragment shading
+			-Merging
+	-Pratique
+		-ShaderGraph
+			-Installation
+				-Création de projet Unity avec le template URP
+				-Package manager
+				-Asset de pipeline
+					-Créer
+					-Donner au projet
+					-Setup la Opaque Texture et la Depth Texture
+				-Update les materials
+				-...
+			-Workflow de création
+				-Créer asset > Shader > Universal Render Pipeline > Unlit Shader Graph
+				-Faire des modifs dans le shader
+				-Save Asset
+				-Créer un Material
+					-Soit séparement
+						-Drag le shader sur le material
+					-Soit en créant à partir de clic droit sur l'asset shader
+				-Placer le material sur un game object
+				-Cocher Always Refresh pour les shaders animés
+			-Interface
+				-Naviguer à la souris
+					-clic molette pour déplacer la caméra
+				-Preview
+					-clic droit set mesh
+					-Ça casse facilement
+				-Master
+					-Section Fragment
+					-Section Vertex
+				-Graph Inspector
+				-Blackboard & properties externes
+					-Valeurs par défaut
+						-Piège de priorité
+					-Name vs Reference
+					-
+				-Ports et cables
+					-nombre de cases
+				-Vecteurs XYZ, RGB
+				-Créer des nodes
+					-Espace
+					-Clic droit > Create node
+				
+				
+		-ShaderLab
+			-Workflow de création
+				-pipeline built-in vs URP vs HDRP
+			-Structure des fichiers
+			-...
+			
+
 <h2> Render Pipeline </h2>
 <pre>
 Les étapes principales de rendu sont:
@@ -74,7 +206,7 @@ b
 	b
 	b
 	
-	<img src="./az.PNG" alt=" "> <img src="./ae.PNG" alt=" "> <img src="./ar.PNG" alt=" ">
+	<img src="./az.PNG" alt=" "> <img src="./ae.PNG" alt=" "> <!-- <img src="./ar.PNG" alt=" "> -->
 	
 </pre>		
 </body>
