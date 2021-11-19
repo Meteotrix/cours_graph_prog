@@ -338,8 +338,11 @@ Cette série d'étapes de calculs c'est ce qu'on appelle le pipeline graphique.
 	//todo
 -Textures procédurales
 	-node Checkerboard
+		//todo
 	-node Simple noise / Gradient noise
+		//todo
 	-node Voronoi
+		//todo
 	
 <h2>Couleur et Luminosité</h2>
 -multiplier une texture monochrome avec une couleur
@@ -361,11 +364,40 @@ Cette série d'étapes de calculs c'est ce qu'on appelle le pipeline graphique.
 	-on compense en assombrissant nos valeurs de luminosité
 	-on assombrit le contraste de nos valeurs avec une puissance (au sens mathématique, donc x², etc.)
 	-c'est cette variable puissance qu'on appelle gamma
-	-le standard sRGB utilise une puissance de 2.2 pour appliquer l'encodage gamma
-	-et puissance 0.45 pour appliquer le décodage gamma
+	-le standard sRGB utilise une puissance de 0.45 pour appliquer l'encodage gamma
+	-et puissance 2.2 pour appliquer le décodage gamma
 	-x puissance 2.2 donne des valeurs plus sombres, càd plus basses, 
 		-parce que nos valeurs viennent de l'intervalle entre 0 et 1.
 		-les puissances ont l'effet inverse sur des valeurs entre 0 et 1.
+	-par contre, y'a une subtilité pas évidente du tout:
+		-quand on enregistre un fichier avec des couleurs, c'est enregistré plus clair (encodé avec gamma à 0.45)
+		-pour que les valeurs sombres à l'origine occupent dans la palette la place des gris clairs, ce qui permet de préserver les valeurs sombres
+		-quand on veut lire un fichier avec des couleurs dedans, on décode
+		-le décodage ré-assombrit les valeurs avec gamma à 2.2
+-HDR
+	HDR veut dire "high dynamic range", ou "haute gamme dynamique" en français.
+		Ça s'oppose au LDR (low dynamic range), qui est l'encodage typique de couleurs.
+		En LDR, on a 256 niveau de luminosité possibles par canal couleur.
+		En fait, cette limite de 256 intervient surtout au niveau de l'affichage final sur l'écran.
+		En vrai, tant qu'on est dans l'ordinateur, on fait ce qu'on veut avec les valeurs.
+		L'idée du HDR c'est d'artificiellement augmenter la quantité de valeurs de luminosité représentables.
+		Ça fait ça en nous permettant de représenter des valeurs de luminosité hors de l'intervalle [0;1].
+		L'idée c'est de se donner la possibilité de distinguer entre des valeurs très brillantes mais d'intensité différente.
+		Une lampe peut briller blanc, un phare peut briller blanc, et le soleil peut briller blanc.
+		Mais c'est 3 valeurs de blanc avec des luminosités différentes.
+		En LDR, les 3 étant blanches, elles auraient une valeur de (1,1,1) (par défaut).
+		En HDR, on peut dire que la lampe a une valeur de 1, le phare de 10, le soleil de 100.
+		Et ensuite, une courbe de tone-mapping rammène ces valeurs dans l'intervalle [0;1].
+		On peut appliquer une logique similaire aux valeurs sombres.
+		On veut pouvoir représenter des valeurs sombres de 0.1, 0.01, 0.001, etc.
+		La courbe de tone-mapping applatit en fait nos valeurs moyennes pour faire de la place aux valeurs sombres et claires.
+		L'idée c'est de réduire le contraste de tout pour gagner de la marge de manoeuvre.
+		//todo add courbe
+		//todo finir d'expliquer
+	-tone-mapping
+		-ACES
+			//todo
+		-ça permet de se faire
 	
 
 <h2>Animations</h2>
