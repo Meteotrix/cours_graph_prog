@@ -4,19 +4,89 @@
 <meta charset="utf-8"/>
 <title> recap exam gprog 2021-2022 </title>
 <style>
-img {
+body {
+	background: rgb(32,32,32);
+	color: white;
+	font-family: Arial, Helvetica, sans-serif;
+	--dark: 1;
+}
+img:not(.modal-content) {
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
-	height: 500px;
+	height: 100px;
+	cursor: pointer;
+	/*transition: 0.3s;*/
 }
+img:not(.modal-content):hover {opacity: 0.7;}
 pre {
-	font-size: 17px;
-	tab-size: 4;
+	font-size: 16.5px;
+	tab-size: 8;
+	font-family: Arial, Helvetica, sans-serif;
 }
+
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  /*width: 50%;*/
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+.active, .collapsible:hover {
+  background-color: #555;
+}
+.content {
+  /*padding: 0 18px;*/
+  display: none;
+  /*overflow: auto;*/
+  width: 200%;
+  background-color: rgb(64,64,64);
+  color: white;
+}
+
+/* The Modal (background) */
+.modal {
+  /*align: center;*/
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (image) */
+.modal-content {
+  margin: auto;
+  display: block;
+  /*scale: 500%;*/
+  /*max-width: 700px;*/
+}
+
+/* Caption of Modal Image */
+#modalCaption {
+  margin: auto;
+  display: block;
+  width: 90%;
+  /*max-width: 700px;*/
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
 </style>
 </head>
-<body> <!-- ////////////////////////////////////////////// -->
+<body id="body"> <!-- ////////////////////////////////////////////// -->
 <!--<h1> A </h1>
 
 <ul>
@@ -28,508 +98,615 @@ pre {
 		</ul> 
 	</li>
 </ul>-->
+<!--<script>
+	function darkmode() 
+	{ 
+		if(document.getElementById("body").style.dark == 1)
+		{
+			document.getElementById("body").style.backgroundColor = "rgb(256,256,256)";
+			document.getElementById("body").style.color = "rgb(0,0,0)";
+			document.getElementById("body").style.dark = "0";
+		}
+		else 
+		{
+			document.getElementById("body").style.backgroundColor = "rgb(32,32,32)";
+			document.getElementById("body").style.color = 'white';
+			document.getElementById("body").style.dark = "1";
+		}
+	}
+</script>
+ <button type="button" onclick="darkmode();" style="float: right;">Toggle Dark Mode</button> -->
+<!-- The Modal -->
+
+<div id="myModal" class="modal">
+  <img class="modal-content" id="modalImg" src="empty.png" alt=" ">
+  <!-- <div id="caption"></div> -->
+</div>
+
 <h1>Recap Programmation Graphique</h1>
 <pre>
-Les infos sur cette page sont à destination à la fois du cours de prog graphique des game progs et de math1 des game artists
-<h2>Ressources</h2>
-dispos sur drive ou par demande mail / discord.
+	Les infos sur cette page sont à destination à la fois du cours de prog graphique des game progs et de math1 des game artists.
 
-2021-2022
-	-graph prog 
-		-dossier drive "Graph Prog B3GP 2021-22"
-			-assets
-			-bibliographie du cours de graph prog
-	-math1 
-		-dossier drive "Math1 B2GA 2021-22"
-			-recap minimal de cours seulement, incomplet
-	-math2
-		-dossier drive "Math2 B3GA 2021-22"
-			-assets
-			-screenshots
-			-recap minimal de cours seulement, incomplet
-2019-2021
-	-math1 B3 2019-2020 
-		-dossier drive "Shadergraph B3GA 2019-2020"
-			-docs écrits (obsolètes avec des erreurs)
-			-assets
-			-screenshots
-	-math1 B2 2019-2021
-		-dossier drive "Shadergraph B2GA"
-			-google site
-			-vidéos de cours, assez courtes (intro manquante)
-			-assets
-			-screenshots
-		-VODs youtube de cours complètes de math1 2020-2021
-	-animation procédurale 2019-2021
-		-dossier drive "Proc Anim"
-			-google site
-				recap minimal de cours seulement, incomplet
-			-assets
-			-screenshots
-		-VODs youtube de cours complètes d'animation procédurale 2020-2021
-	-level design procédural B3 2020-2021
-		-dossier drive "Proc LD B3 2020-2021"
-			-google site 
-				-bibliographie
-				-recap minimal de cours seulement, incomplet
-			-projet + guide d'utilisation
-			
-<h2>Versions de Unity</h2>
--La version actuelle des cours se passe sur 2021.1
-			
-<h2>Les render pipelines</h2>
-
-Le rendu consiste à obtenir l'image d'une scène du point de vue d'une caméra.
-Le rendu est effectué par une série de calculs à partir des données de notre scène.
-Cette série d'étapes de calculs c'est ce qu'on appelle le pipeline graphique.
-
--Pipelines fixes vs programmables
-	Anciennement, les pipelines étaient configurables, mais pas programmables, et donc on avait pas beaucoup de flexibilité dans le déroulement du rendu. 
-	De nos jours on a l'option d'insérer des scripts dans le pipeline de rendu pour contrôler certaines étapes.
-	La dernière console à avoir un pipeline fixe était la Wii (2006).
-	-shaders définition
-		Ces scripts qui permettent de contrôler le rendu de nos objets, on appelle ça des shaders.
-		On peut typiquement contrôler la forme des objets, leur éclairage, couleur et transparence. Vertex par vertex, mais aussi pixel par pixel.
-		-familles de shaders
-			On peut regrouper les shaders courants en plusieurs familles:
-				-shaders de debug
-					//todo
-				-shaders "réalistes" old-school, donc par si réalistes que ça
-					//todo
-				-shaders réalistes modernes, qui suivent le principe du Physically-Based Rendering (PBR)
-					//todo
-				-shaders non-réalistes, souvent stylisés, cartoon, dits NPR (Non-Photo-Realistic)
-					//todo
-				-autres shaders, souvent pour des effets spécifiques.
-					//todo
-	-materials définition
-	-applications courantes
--Scènes et objets
-	-Pour simplifier, on suppose généralement qu'une scène est une liste d'objets visibles,
-	et que les objets sont des listes de triangles.
-	-À leur tour les triangles sont un trio de vertices qui ont des propriétés.
--Render loop
-	Pour faire le rendu d'une scène en temps réel, typiquement on calcule plusieurs images par seconde, typiquement 60 par seconde, 
-	mais ça dépend de la fréquence d'affichage de l'écran, on a souvent 120fps de nos jours par exemple.
-	
-	-Refresh
-		//todo
-		-Front buffer & Back buffer
-			//todo
-		-VSync
-			//todo
-			-Tear lines
-				//todo
-	-Draw calls
-		Ce qui est envoyé dans le pipeline de rendu c'est typiquement une liste de vertices, qui vont constituer nos triangles. 
-		Ils peuvent aussi consistuer d'autres types de primitives, comme des lignes, des éventails de triangles, mais on va pas s'y intéresser. 
-		Ces vertice sont donnés au pipeline avec leurs propriétés (position, UVs, normales, etc.). 
-		À chaque fois qu'on envoie des vertices dans le pipeline, ça s'appelle un draw call (en interne, le moteur appelle la fonction Draw(), qui prend nos vertices et les passe à la carte graphique).
-		-Batching
-			Pour des raisons de performance, on a tendance à grouper les vertices qui ont le même material avant de les envoyer dans le pipeline, même si ces vertices appartiennent à des meshs différents. On appelle ça le batching ("batch" veut dire "fournée" en anglais, cf faire des cookies au four). Ça permet de réduire le nombre de draw calls.
-	-(Forward Rendering vs Deferred Rendering)
-		//todo
--Vertex properties
-	-position
-	-normales
-	-tangentes
-	-UVs
-	-vertex color
-	-...
--(Gestion de topologie - Hull shaders / Domain shaders / Geometry shaders)
--Vertex shading
-	-Projection
-		-Espaces / repères 3D
-			-ex: Héliocentrisme vs Géocentrisme
-			-Origines
-			-Axes
-				-Conventions
-					-Y vertical vs Z vertical
-					-Profondeur avec Z+ ou Z-
-						-Handedness / repères main-gauche vs main-droite
-			-Object Space
-				-Origine/Pivot vs Centre
-				-Objet vs Géométrie
-				-Parenting
-			-World Space
-			-View Space
-			-Clip Space
-				-Camera
-					-Planes
-						-Near
-						-Far
-						-Left, Right, Top, Bottom
-					-Types de projection
-						-Perspective
-						-Orthographique
-						-Autres
-							-...
-					-Projection
-						-Théorème de Thalès
-						-Matrices (cf plus loin)
-			-Screen Space
-				en fait la projection entre clip et screen space est faite pendant la rasterization
+	La priorité c'est d'écrire les sections utiles pour vos projets de construction de shaders pour l'examen, donc : 
+		-les bases du workflow de production de shaders :
+			-ShaderGraph
+			-ShaderLab
+		-les exemples qu'on a vu : 
+			-textures
+			-luminosité
+			-animation
+			-transparence
+			-éclairage direct
+			-outlines
+			-dithering
+			-eau
+		-comment faire une vidéo
 		
-		-Transforms
-			-Ré-exprimer un vecteur dans un autre repère
-			-Appliquer des transforms
-				-Translation
-				-Rotation
-				-Scaling
-				-(Shearing)
-				-Projection
-			-Matrices
-				-Signification et Construction
-					-Dans notre case, on liste les vecteurs qui sont les axes d'un espace
-				-Multiplication
-					-Aide visuelle
-					-Opérations
-					-Piège avec l'ordre des termes
-					-Avoir le même nombre de colonnes à gauche que de lignes à droite
-			-Matrices de transformation
-				-Piège de la contravariance
-				-Inverser des matrices
-					-Résolution d'équations
-					-Manuellement
-						-Inverser la translation
-						-Transposer la rotation
-				-Transposer des matrices
-			-Vecteurs position vs Vecteurs direction
-				-Coordonnées Homogènes W						
-//Rasterization
-	-Clip space -> Screen space
-	-test d'inclusion de pixel dans un triangle
-		-coordonnées barycentriques
-			-calcul d'aires de sous-triangles
-				-cross product / produit vectoriel
-		-détection d'aires "négatives"
-	-interpolation barycentrique de propriétés de vertices pour chaque fragment de la surface d'un triangle
--Fragment shading
-	-Couleur
-		-Textures
-		-Lumière
-	-Transparence
-		-Textures
-		-Type de shader (Opaque, Opaque avec AlphaClip, Transparent)
-		-Type de blending (Alpha blend, Additif, Multiplication, ...)
-	-Propriétés PBR
-		-Smoothness/Roughness
-		-Metalness
-		-Emission
-	-Tri
-		-Depth Testing
--Merging
-	-combinaison des fragments pour obtenir la couleur finale des pixels
-	
-<h2>ShaderGraph</h2>
-//todo
--Pipeline built-in vs URP vs HDRP
-		//todo
--Installation
-	-Création de projet Unity avec le template URP
-		normalement ça setup tout correctement par défaut
-		<img src="./creation projet template urp.png" alt=" ">
-	-Sinon:
-		-Package manager
-			-s'assurer d'avoir installé:
-				-Core RP Library
-				-Universal RP
-				-Shader Graph
-			-Les packages installés sont pas tous listés au même endroit, vérifier dans: 
-				-Unity Registry
-				-In Project
-				//todo add screenshot
-		-Asset de pipeline
-			-Créer via Assets > Create > Rendering > Universal Render Pipeline > Pipeline Asset
-			-Donner au projet via Edit > Project Setting > Graphics > le premier champ
-				//todo add screenshot
-			-Setup la Opaque Texture et la Depth Texture
-				-Dans un projet à template URP, on a un Pipeline Asset déjà créé, cf UniversalRP-HighQuality
-				-sur le Pipeline Asset, cocher Depth Texture et Opaque Texture
-					-ça sera nécessaire pour faire fonctionner les nodes Scene Color et Scene Depth, mais aussi pour faire fonctionner 
-						sampler2D _CameraOpaqueTexture;
-						sampler2D _CameraDepthTexture;
-		-Update les materials
-			//todo
-		//todo
-	-Créer une nouvelle scène vide et travailler dedans
-		-des fois la scène par défaut peut interférer avec ce qu'on fait
--Workflow de création
-	-Créer Asset > Shader > Universal Render Pipeline > Unlit Shader Graph
-	-Ouvrir le shader avec un double clic sur l'asset
-	-Faire des modifs dans le shader
-	-Save Asset
-		-en haut à gauche de la fenêtre de shadergraph
-		//todo add screenshot
-	-Créer un Material
-		-Soit séparement
-			-Drag l'asset shader sur l'asset material
-		-Soit en créant à partir de clic droit sur l'asset shader
-	-Placer le material sur un game object
-		-avec un drag and drop ça marche
-	-Cocher Always Refresh pour les shaders animés
-		//todo screenshot
--Interface
-	-Naviguer à la souris
-		-clic molette pour déplacer la caméra
-		//todo
-	-Preview
-		-clic droit set mesh
-		-Ça casse facilement
-	-Master
-		-Section Fragment
-			//todo
-		-Section Vertex
-			//todo
-	-Graph Inspector
-		//todo
-	-Blackboard & properties externes
-		//todo
-		-Valeurs par défaut
-			//todo
-			-Piège de priorité
-				//todo
-		-Name vs Reference
-			//todo
-		//todo
-	-Ports et cables
-		//todo
-		-nombre de cases
-			//todo
-		-Vecteurs XYZ, RGB
-			//todo
-	-Créer des nodes
-		-Espace
-		-Clic droit > Create node
-	//todo
-	
-<h2>ShaderLab</h2>
-//todo
--Workflow de création
-	//todo
-	-pipeline built-in vs URP vs HDRP
-		//todo
-		//todo poster le lien vers le template URP
--Structure des fichiers
-	//todo
-//todo	
-
-<h2>Shaders de debug</h2>
-//todo
--node Position
-	//todo
--node UV
-	//todo
--node Normal Vector
-	//todo
--node Screen Position
-	//todo
--node Vertex Color
-	//todo
-//todo
-
-<h2>Texturing</h2>
-//todo
--node Sample Texture 2D
-	//todo
--node Tiling & Offset
-	//todo
--node Sampler State				
-	//todo
--Textures procédurales
-	-node Checkerboard
-		//todo
-	-node Simple noise / Gradient noise
-		//todo
-	-node Voronoi
-		//todo
-	
-<h2>Couleur et Luminosité</h2>
--multiplier une texture monochrome avec une couleur
-	-canal par canal
-		-rgba1 * rgba2 = r1 * r2, g1 * g2, b1 * b2, a1 * a2.
-	-le node multiply s'adapte au nombre de cases qu'on lui fournit en entrée
--différence entre valeurs linéaires et valeurs couleur avec correction gamma
-	-shader graph fait la distinction entre les valeurs couleur
-		et les valeurs non-couleur, dites "linéaires".
-	-les valeurs linéaires sont des valeurs qui augmentent en ligne droite
-		-par exemple on peut compter des photons, c'est une mesure objective,
-			-et on peut avoir N photons, ou 2N photons, etc.
-	-à l'inverse, notre perception n'est pas linéaire
-		-donc ça rend les calculs plus compliqués
-	-le problème c'est qu'on voit trop bien dans le noir
-	<img src="./Linear-vs-gamma-corrected.png" alt=" ">
-	-ça fait que si on traitait des palettes de gris avec des valeurs équilibrées,
-	on les verrait déséquilibrées, avec trop de gris clair et pas assez de noirs
-	-on compense en assombrissant nos valeurs de luminosité
-	-on assombrit le contraste de nos valeurs avec une puissance (au sens mathématique, donc x², etc.)
-	-c'est cette variable puissance qu'on appelle gamma
-	-le standard sRGB utilise une puissance de 0.45 pour appliquer l'encodage gamma
-	-et puissance 2.2 pour appliquer le décodage gamma
-	-x puissance 2.2 donne des valeurs plus sombres, càd plus basses, 
-		-parce que nos valeurs viennent de l'intervalle entre 0 et 1.
-		-les puissances ont l'effet inverse sur des valeurs entre 0 et 1.
-	-par contre, y'a une subtilité pas évidente du tout:
-		-quand on enregistre un fichier avec des couleurs, c'est enregistré plus clair (encodé avec gamma à 0.45)
-		-pour que les valeurs sombres à l'origine occupent dans la palette la place des gris clairs, ce qui permet de préserver les valeurs sombres
-		-quand on veut lire un fichier avec des couleurs dedans, on décode
-		-le décodage ré-assombrit les valeurs avec gamma à 2.2
--HDR
-	HDR veut dire "high dynamic range", ou "haute gamme dynamique" en français.
-		Ça s'oppose au LDR (low dynamic range), qui est l'encodage typique de couleurs.
-		En LDR, on a 256 niveau de luminosité possibles par canal couleur.
-		En fait, cette limite de 256 intervient surtout au niveau de l'affichage final sur l'écran.
-		En vrai, tant qu'on est dans l'ordinateur, on fait ce qu'on veut avec les valeurs.
-		L'idée du HDR c'est d'artificiellement augmenter la quantité de valeurs de luminosité représentables.
-		Ça fait ça en nous permettant de représenter des valeurs de luminosité hors de l'intervalle [0;1].
-		L'idée c'est de se donner la possibilité de distinguer entre des valeurs très brillantes mais d'intensité différente.
-		Une lampe peut briller blanc, un phare peut briller blanc, et le soleil peut briller blanc.
-		Mais c'est 3 valeurs de blanc avec des luminosités différentes.
-		En LDR, les 3 étant blanches, elles auraient une valeur de (1,1,1) (par défaut).
-		En HDR, on peut dire que la lampe a une valeur de 1, le phare de 10, le soleil de 100.
-		Et ensuite, une courbe de tone-mapping rammène ces valeurs dans l'intervalle [0;1].
-		On peut appliquer une logique similaire aux valeurs sombres.
-		On veut pouvoir représenter des valeurs sombres de 0.1, 0.01, 0.001, etc.
-		La courbe de tone-mapping applatit en fait nos valeurs moyennes pour faire de la place aux valeurs sombres et claires.
-		L'idée c'est de réduire le contraste de tout pour gagner de la marge de manoeuvre.
-		//todo add courbe
-		//todo finir d'expliquer
-	-tone-mapping
-		-ACES
-			//todo
-		-ça permet de se faire
-	
-
-<h2>Animations</h2>
-//todo
--node Time
-	//todo
-	-float precision
-		//todo
-		-video minecraft
-			//todo
--Scrolling UVs
-	//todo
--Luminosité et contraste
-	//todo
-	-Multiply
-		//todo
-	-Power
-		//todo
--Contrôle externe
-	//todo
-	-Depuis la fenêtre animation
-		//todo
-	-Depuis un script
-		//todo
--Texture flipbook
-	//todo
-//todo
-		
-<h2>Éclairage direct</h2>
-//todo
--Phong shading
-	//todo
-	-éclairage oldschool
-		//todo
-	-Réflexions diffuses
-		//todo
-		-dot product / produit scalaire
-			//todo
-	-Réflexions spéculaires
-		//todo
-	-Réflexions ambiantes
-		//todo
--Ombres
-	//todo
--Lumières multiples
-	//todo
-//todo
-		
-<h2>Cel Shading</h2>
-//todo
--exemples
-	-Zelda WindWaker
-		//todo
-	-DBZ Budokai
-		//todo
--Posterization
-	//todo
-	-node Posterize
-		//todo
-	-Manuellement
-		//todo
-		-Floor()
-			//todo
-		-Ceil()
-			//todo
-		-Round()
-			//todo
-//todo
-			
-<h2>Outlines</h2>
-//todo
--exemples
-	-Okami
-		//todo
--Rendu multipasses
-	//todo
--Vertex Displacement
-	//todo
-	-Normales lissées vs éclatement des faces
-		//todo
-		-Cas des meshs à facettes apparentes
-			//todo
-	-compenser pour la perspective
-		//todo
--masquer les front faces
-	//todo
-	-node IsFrontFace
-		//todo
-	-node Branch
-		//todo
--afficher les backfaces
-	//todo
-	-Cull Front dans ShaderLab
-		//todo
-	-Two-Sided dans ShaderGraph
-		//todo
-//todo
-		
-<h2>Dithering</h2>
-//todo
-	
-<h2>Eau</h2>
-//todo
--sur le Pipeline Asset, cocher Depth Texture et Opaque Texture
-	-ça sera nécessaire pour faire fonctionner les nodes 
-		-Scene Color 
-		-Scene Depth, 
-	mais aussi pour faire fonctionner 
-		sampler2D _CameraOpaqueTexture;
-		sampler2D _CameraDepthTexture;
--Reflection probes
-	//todo
--Refraction
-	-Opaque Texture / node Scene Color
-		//todo
-	//todo
--Absorption
-	-Depth Texture / node Scene Depth
-		//todo
-	//todo
--Vertex Displacement
-	//todo
-//todo
+	Si il y a des sections dédiées Game Prog ou Game Art, elles auront respectivement un fond bleu (GP), ou vert (GA).
 </pre>
+<h2>Ressources</h2><pre>
+	disponibles sur drive ou par demande via mail / discord.
+
+	datant de 2021-2022
+		-graph prog 
+			-dossier drive "Graph Prog B3GP 2021-22"
+				-assets
+				-bibliographie du cours de graph prog
+		-math1 
+			-dossier drive "Math1 B2GA 2021-22"
+				-recap minimal de cours seulement, incomplet
+		-math2
+			-dossier drive "Math2 B3GA 2021-22"
+				-assets
+				-screenshots
+				-recap minimal de cours seulement, incomplet
+	datant de 2019-2021
+		-math1 B3 2019-2020 
+			-dossier drive "Shadergraph B3GA 2019-2020"
+				-docs écrits (obsolètes avec des erreurs)
+				-assets
+				-screenshots
+		-math1 B2 2019-2021
+			-dossier drive "Shadergraph B2GA"
+				-google site
+				-vidéos de cours, assez courtes (intro manquante)
+				-assets
+				-screenshots
+			-VODs youtube de cours complètes de math1 2020-2021
+		-animation procédurale 2019-2021
+			-dossier drive "Proc Anim"
+				-google site
+					recap minimal de cours seulement, incomplet
+				-assets
+				-screenshots
+			-VODs youtube de cours complètes d'animation procédurale 2020-2021
+		-level design procédural B3 2020-2021
+			-dossier drive "Proc LD B3 2020-2021"
+				-google site 
+					-bibliographie
+					-recap minimal de cours seulement, incomplet
+				-projet + guide d'utilisation
+			
+</pre><h2>Versions de Unity</h2><pre>
+	La version actuelle des cours se passe sur 2021.1
+	
+	Pipeline de rendu built-in (BIRP) vs URP vs HDRP
+		//todo : blabla intro présentation
+			
+		On travaille avec URP parce que HDRP fonctionne pas sur mobile.
+			
+</pre>
+<h2>Les render pipelines</h2>
+<button type="button" class="collapsible">[incomplet] +</button>
+<div class="content">
+<pre>
+
+	Le rendu consiste à obtenir l'image d'une scène du point de vue d'une caméra.
+	Le rendu est effectué par une série de calculs à partir des données de notre scène.
+	Cette série d'étapes de calculs c'est ce qu'on appelle le pipeline graphique.
+
+	-Pipelines fixes vs programmables
+		Anciennement, les pipelines étaient configurables, mais pas programmables, et donc on avait pas beaucoup de flexibilité dans le déroulement du rendu. 
+		De nos jours on a l'option d'insérer des scripts dans le pipeline de rendu pour contrôler certaines étapes.
+		La dernière console à avoir un pipeline fixe était la Wii (2006).
+		-shaders définition
+			Ces scripts qui permettent de contrôler le rendu de nos objets, on appelle ça des shaders.
+			On peut typiquement contrôler la forme des objets, leur éclairage, couleur et transparence. Vertex par vertex, mais aussi pixel par pixel.
+			-familles de shaders
+				On peut regrouper les shaders courants en plusieurs familles:
+					-shaders de debug
+						//todo
+					-shaders "réalistes" old-school, donc par si réalistes que ça
+						//todo
+					-shaders réalistes modernes, qui suivent le principe du Physically-Based Rendering (PBR)
+						//todo
+					-shaders non-réalistes, souvent stylisés, cartoon, dits NPR (Non-Photo-Realistic)
+						//todo
+					-autres shaders, souvent pour des effets spécifiques.
+						//todo
+		-materials définition
+		-applications courantes
+	-Scènes et objets
+		-Pour simplifier, on suppose généralement qu'une scène est une liste d'objets visibles,
+		et que les objets sont des listes de triangles.
+		-À leur tour les triangles sont un trio de vertices qui ont des propriétés.
+	-Render loop
+		Pour faire le rendu d'une scène en temps réel, typiquement on calcule plusieurs images par seconde, typiquement 60 par seconde, 
+		mais ça dépend de la fréquence d'affichage de l'écran, on a souvent 120fps de nos jours par exemple.
+		
+		-Refresh
+			//todo
+			-Front buffer & Back buffer
+				//todo
+			-VSync
+				//todo
+				-Tear lines
+					//todo
+		-Draw calls
+			Ce qui est envoyé dans le pipeline de rendu c'est typiquement une liste de vertices, qui vont constituer nos triangles. 
+			Ils peuvent aussi consistuer d'autres types de primitives, comme des lignes, des éventails de triangles, mais on va pas s'y intéresser. 
+			Ces vertice sont donnés au pipeline avec leurs propriétés (position, UVs, normales, etc.). 
+			À chaque fois qu'on envoie des vertices dans le pipeline, ça s'appelle un draw call (en interne, le moteur appelle la fonction Draw(), qui prend nos vertices et les passe à la carte graphique).
+			-Batching
+				Pour des raisons de performance, on a tendance à grouper les vertices qui ont le même material avant de les envoyer dans le pipeline, même si ces vertices appartiennent à des meshs différents. On appelle ça le batching ("batch" veut dire "fournée" en anglais, cf faire des cookies au four). Ça permet de réduire le nombre de draw calls.
+		-(Forward Rendering vs Deferred Rendering)
+			//todo
+	-Vertex properties
+		-position
+		-normales
+		-tangentes
+		-UVs
+		-vertex color
+		-...
+	-(Gestion de topologie - Hull shaders / Domain shaders / Geometry shaders)
+	-Vertex shading
+		-Projection
+			-Espaces / repères 3D
+				-ex: Héliocentrisme vs Géocentrisme
+				-Origines
+				-Axes
+					-Conventions
+						-Y vertical vs Z vertical
+						-Profondeur avec Z+ ou Z-
+							-Handedness / repères main-gauche vs main-droite
+				-Object Space
+					-Origine/Pivot vs Centre
+					-Objet vs Géométrie
+					-Parenting
+				-World Space
+				-View Space
+				-Clip Space
+					-Camera
+						-Planes
+							-Near
+							-Far
+							-Left, Right, Top, Bottom
+						-Types de projection
+							-Perspective
+							-Orthographique
+							-Autres
+								-...
+						-Projection
+							-Théorème de Thalès
+							-Matrices (cf plus loin)
+				-Screen Space
+					en fait la projection entre clip et screen space est faite pendant la rasterization
+			
+			-Transforms
+				-Ré-exprimer un vecteur dans un autre repère
+				-Appliquer des transforms
+					-Translation
+					-Rotation
+					-Scaling
+					-(Shearing)
+					-Projection
+				-Matrices
+					-Signification et Construction
+						-Dans notre case, on liste les vecteurs qui sont les axes d'un espace
+					-Multiplication
+						-Aide visuelle
+						-Opérations
+						-Piège avec l'ordre des termes
+						-Avoir le même nombre de colonnes à gauche que de lignes à droite
+				-Matrices de transformation
+					-Piège de la contravariance
+					-Inverser des matrices
+						-Résolution d'équations
+						-Manuellement
+							-Inverser la translation
+							-Transposer la rotation
+					-Transposer des matrices
+				-Vecteurs position vs Vecteurs direction
+					-Coordonnées Homogènes W						
+	//Rasterization
+		-Clip space -> Screen space
+		-test d'inclusion de pixel dans un triangle
+			-coordonnées barycentriques
+				-calcul d'aires de sous-triangles
+					-cross product / produit vectoriel
+			-détection d'aires "négatives"
+		-interpolation barycentrique de propriétés de vertices pour chaque fragment de la surface d'un triangle
+	-Fragment shading
+		-Couleur
+			-Textures
+			-Lumière
+		-Transparence
+			-Textures
+			-Type de shader (Opaque, Opaque avec AlphaClip, Transparent)
+			-Type de blending (Alpha blend, Additif, Multiplication, ...)
+		-Propriétés PBR
+			-Smoothness/Roughness
+			-Metalness
+			-Emission
+		-Tri
+			-Depth Testing
+	-Merging
+		-combinaison des fragments pour obtenir la couleur finale des pixels
+	
+</pre>
+</div>
+<h2>ShaderGraph</h2><pre>
+	La construction de shaders, c’est le cas d'usage principal des maths et de la logique en game art, 
+	c'est pourquoi le cours de maths de game art se concentre sur l'apprentissage de shadergraph.
+	<h3>	Installation</h3>
+		Pour avoir un projet unity avec shadergraph installé dedans, on a deux options :
+		
+		soit 1) Création de projet Unity avec le template URP, normalement ça setup tout correctement par défaut
+			<img src="./creation_projet_template_urp.png" alt="creation_projet_template_urp" onclick="zoompic(event)">
+		
+		soit 2) Installer à la main 		
+			<button type="button" class="collapsible">[optionel] +</button>
+		<div class="content">
+			-Package manager accessible via Window > Package Manager
+				-Les packages sont pas tous listés au même endroit, vérifier dans Unity Registry
+					<img src="./package_manager_dropdown1.png" alt="package_manager_dropdown1" onclick="zoompic(event)">				
+				-Installer:
+					-Core RP Library						
+					-Universal RP
+					-Shader Graph
+						<img src="./package_manager_srp_install.PNG" alt="package_manager_srp_install" onclick="zoompic(event)"> <img src="./package_manager_urp_and_sg_install.PNG" alt="package_manager_urp_and_sg_install" onclick="zoompic(event)">		
+			-Asset de pipeline
+				-Créer via Assets > Create > Rendering > Universal Render Pipeline > Pipeline Asset
+				-Donner au projet via Edit > Project Setting > Graphics > le premier champ
+					<img src="./set_pipeline_in_graphics.png" alt="set_pipeline_in_graphics" onclick="zoompic(event)">
+				-Setup la Opaque Texture et la Depth Texture
+					-sur le Pipeline Asset, cocher Depth Texture et Opaque Texture
+						<img src="./opaque_and_depth_tex.PNG" alt="opaque_and_depth_tex" onclick="zoompic(event)">
+						-ça sera nécessaire pour faire fonctionner les nodes Scene Color et Scene Depth, mais aussi pour faire fonctionner 
+							sampler2D _CameraOpaqueTexture;
+							sampler2D _CameraDepthTexture;
+						-Dans un projet à template URP, on a un Pipeline Asset déjà créé, il s'appelle UniversalRP-HighQuality
+			-Update les materials
+				-si tout est rose après avoir mis le nouveau pipeline, c'est normal, il faut changer les matériaux pour qu'ils utilisent des shaders compatibles avec le pipeline choisi
+					<img src="./everything_magenta.PNG" alt="everything_magenta" onclick="zoompic(event)">
+				-l'option est dans Edit > Render Pipeline > Universal Render Pipeline > Upgrade Project Materials to UniversalRP Materials
+				     <img src="./upgrade_mats.png" alt="upgrade_mats" onclick="zoompic(event)">
+				-sinon manuellement créer des nouveaux materials pour les différents objets et les ré-attribuer à la main sur les gameobjects.
+		</div>
+		+Créer une nouvelle scène vide et travailler dedans
+			-des fois la scène par défaut peut interférer avec ce qu'on fait
+	
+	<h3>	Workflow de création de shader</h3>
+		-Créer Asset > Shader > Universal Render Pipeline > Unlit Shader Graph
+			<img src="./create_sg_asset.png" alt="create_sg_asset" onclick="zoompic(event)">
+		-Ouvrir le shader avec un double clic sur l'asset
+		-Faire des modifs dans le shader			
+		-Save Asset
+			-en haut à gauche de la fenêtre de shadergraph
+				<img src="./change_sg.PNG" alt="change_sg" onclick="zoompic(event)">
+		-Créer un Material
+			-Soit séparement via Assets > Create > Material
+				-puis drag l'asset shader sur l'asset material
+					<img src="./drag_sg_to_mat.PNG" alt="drag_sg_to_mat" onclick="zoompic(event)">
+			-(Soit en créant à partir de clic droit sur l'asset shader)
+		-Placer le material sur un game object
+			-avec un drag and drop ça marche
+				<img src="./drag_mat_to_go.PNG" alt="drag_mat_to_go" onclick="zoompic(event)">
+		-Cocher Always Refresh pour les shaders animés
+			<img src="./always_refresh.PNG" alt="always_refresh" onclick="zoompic(event)">
+	
+	<h3>	Interface</h3>
+		-Naviguer à la souris
+			-clic molette pour déplacer la caméra
+			//todo
+		-Preview
+			-clic droit set mesh
+			-Ça casse facilement
+		-Master
+			-Section Fragment
+				//todo
+			-Section Vertex
+				//todo
+		-Graph Inspector
+			//todo
+		-Blackboard & properties externes
+			//todo
+			-Valeurs par défaut
+				//todo
+				-Piège de priorité
+					//todo
+			-Name vs Reference
+				//todo
+			//todo
+		-Ports et cables
+			//todo
+			-nombre de cases
+				//todo
+			-Vecteurs XYZ, RGB
+				//todo
+		-Créer des nodes
+			-Espace
+			-Clic droit > Create node
+		//todo
+		
+</pre><h2>ShaderLab</h2><pre>
+	//todo
+	
+	<h3>	Workflow de création de shader</h3>
+		//todo
+		-pipeline built-in (BIRP) vs URP vs HDRP
+			//todo
+			//todo poster le lien vers le template URP
+	
+	<h3>	Structure des fichiers</h3>
+		//todo
+		
+	<h3>	API et docs</h3>
+		//todo	
+
+</pre><!-- <h2>Shaders de debug</h2><pre>
+	//todo
+	-node Position
+		//todo
+	-node UV
+		//todo
+	-node Normal Vector
+		//todo
+	-node Screen Position
+		//todo
+	-node Vertex Color
+		//todo
+	//todo
+
+</pre> --><h2>Texturing</h2><pre>
+	//todo
+	-node Sample Texture 2D
+		//todo
+	-node Tiling & Offset
+		//todo
+	-node Sampler State				
+		//todo
+	-Textures procédurales
+		-node Checkerboard
+			//todo
+		-node Simple noise / Gradient noise
+			//todo
+		-node Voronoi
+			//todo
+	
+</pre><h2>Couleur et Luminosité</h2><pre>
+	-multiplier une texture monochrome avec une couleur
+		-canal par canal
+			-rgba1 * rgba2 = r1 * r2, g1 * g2, b1 * b2, a1 * a2.
+		-le node multiply s'adapte au nombre de cases qu'on lui fournit en entrée
+	-différence entre valeurs linéaires et valeurs couleur avec correction gamma
+		-shader graph fait la distinction entre les valeurs couleur
+			et les valeurs non-couleur, dites "linéaires".
+		-les valeurs linéaires sont des valeurs qui augmentent en ligne droite
+			-par exemple on peut compter des photons, c'est une mesure objective,
+				-et on peut avoir N photons, ou 2N photons, etc.
+		-à l'inverse, notre perception n'est pas linéaire
+			-donc ça rend les calculs plus compliqués
+		-le problème c'est qu'on voit trop bien dans le noir
+		<img src="./Linear-vs-gamma-corrected.png" alt=" " onclick="zoompic(event)">
+		-ça fait que si on traitait des palettes de gris avec des valeurs équilibrées,
+		on les verrait déséquilibrées, avec trop de gris clair et pas assez de noirs
+		-on compense en assombrissant nos valeurs de luminosité
+		-on assombrit le contraste de nos valeurs avec une puissance (au sens mathématique, donc x², etc.)
+		-c'est cette variable puissance qu'on appelle gamma
+		-le standard sRGB utilise une puissance de 0.45 pour appliquer l'encodage gamma
+		-et puissance 2.2 pour appliquer le décodage gamma
+		-x puissance 2.2 donne des valeurs plus sombres, càd plus basses, 
+			-parce que nos valeurs viennent de l'intervalle entre 0 et 1.
+			-les puissances ont l'effet inverse sur des valeurs entre 0 et 1.
+		-par contre, y'a une subtilité pas évidente du tout:
+			-quand on enregistre un fichier avec des couleurs, c'est enregistré plus clair (encodé avec gamma à 0.45)
+			-pour que les valeurs sombres à l'origine occupent dans la palette la place des gris clairs, ce qui permet de préserver les valeurs sombres
+			-quand on veut lire un fichier avec des couleurs dedans, on décode
+			-le décodage ré-assombrit les valeurs avec gamma à 2.2
+	-HDR
+		HDR veut dire "high dynamic range", ou "haute gamme dynamique" en français.
+			Ça s'oppose au LDR (low dynamic range), qui est l'encodage typique de couleurs.
+			En LDR, on a 256 niveau de luminosité possibles par canal couleur.
+			En fait, cette limite de 256 intervient surtout au niveau de l'affichage final sur l'écran.
+			En vrai, tant qu'on est dans l'ordinateur, on fait ce qu'on veut avec les valeurs.
+			L'idée du HDR c'est d'artificiellement augmenter la quantité de valeurs de luminosité représentables.
+			Ça fait ça en nous permettant de représenter des valeurs de luminosité hors de l'intervalle [0;1].
+			L'idée c'est de se donner la possibilité de distinguer entre des valeurs très brillantes mais d'intensité différente.
+			Une lampe peut briller blanc, un phare peut briller blanc, et le soleil peut briller blanc.
+			Mais c'est 3 valeurs de blanc avec des luminosités différentes.
+			En LDR, les 3 étant blanches, elles auraient une valeur de (1,1,1) (par défaut).
+			En HDR, on peut dire que la lampe a une valeur de 1, le phare de 10, le soleil de 100.
+			Et ensuite, une courbe de tone-mapping rammène ces valeurs dans l'intervalle [0;1].
+			On peut appliquer une logique similaire aux valeurs sombres.
+			On veut pouvoir représenter des valeurs sombres de 0.1, 0.01, 0.001, etc.
+			La courbe de tone-mapping applatit en fait nos valeurs moyennes pour faire de la place aux valeurs sombres et claires.
+			L'idée c'est de réduire le contraste de tout pour gagner de la marge de manoeuvre.
+			//todo add courbe
+			//todo finir d'expliquer
+		-tone-mapping
+			-ACES
+				//todo
+			-ça permet de se faire
+	
+
+</pre><h2>Animations</h2><pre>
+	//todo
+	-node Time
+		//todo
+		-float precision
+			//todo
+			-video minecraft
+				//todo
+	-Scrolling UVs
+		//todo
+	-Luminosité et contraste
+		//todo
+		-Multiply
+			//todo
+		-Power
+			//todo
+	-Contrôle externe
+		//todo
+		-Depuis la fenêtre animation
+			//todo
+		-Depuis un script
+			//todo
+	-Texture flipbook
+		//todo
+	//todo
+		
+</pre><h2>Éclairage direct</h2><pre>
+	//todo
+	-Phong shading
+		//todo
+		-éclairage oldschool
+			//todo
+		-Réflexions diffuses
+			//todo
+			-dot product / produit scalaire
+				//todo
+		-Réflexions spéculaires
+			//todo
+		-Réflexions ambiantes
+			//todo
+	-Ombres
+		//todo
+	-Lumières multiples
+		//todo
+	//todo
+		
+</pre><h2>Cel Shading</h2><pre>
+	//todo
+	-exemples
+		-Zelda WindWaker
+			//todo
+		-DBZ Budokai
+			//todo
+	-Posterization
+		//todo
+		-node Posterize
+			//todo
+		-Manuellement
+			//todo
+			-Floor()
+				//todo
+			-Ceil()
+				//todo
+			-Round()
+				//todo
+	//todo
+			
+</pre><h2>Outlines</h2><pre>
+	//todo
+	-exemples
+		-Okami
+			//todo
+	-Rendu multipasses
+		//todo
+	-Vertex Displacement
+		//todo
+		-Normales lissées vs éclatement des faces
+			//todo
+			-Cas des meshs à facettes apparentes
+				//todo
+		-compenser pour la perspective
+			//todo
+	-masquer les front faces
+		//todo
+		-node IsFrontFace
+			//todo
+		-node Branch
+			//todo
+	-afficher les backfaces
+		//todo
+		-Cull Front dans ShaderLab
+			//todo
+		-Two-Sided dans ShaderGraph
+			//todo
+	//todo
+		
+</pre><h2>Dithering</h2><pre>
+	//todo
+	
+</pre><h2>Eau</h2><pre>
+	//todo
+	-sur le Pipeline Asset, cocher Depth Texture et Opaque Texture
+		-ça sera nécessaire pour faire fonctionner les nodes 
+			-Scene Color 
+			-Scene Depth, 
+		mais aussi pour faire fonctionner 
+			sampler2D _CameraOpaqueTexture;
+			sampler2D _CameraDepthTexture;
+	-Reflection probes
+		//todo
+	-Refraction
+		-Opaque Texture / node Scene Color
+			//todo
+		//todo
+	-Absorption
+		-Depth Texture / node Scene Depth
+			//todo
+		//todo
+	-Vertex Displacement
+		//todo
+	//todo
+</pre>
+<script>
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+var modalImg = document.getElementById("modalImg");
+var modalCaption = document.getElementById("caption");
+
+function zoompic(event)
+{
+	modal.style.display = "block";
+  	modalImg.src = event.target.src;
+	modalImg.width = event.target.naturalWidth;
+	modalImg.height = event.target.naturalHeight;
+  	modalCaption.innerHTML = event.target.alt;
+}
+
+modal.onclick = function() { 
+  modal.style.display = "none";
+}
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
 <!--<h2> B2 </h2>
 <pre>
 b
 	b
 	b
 	
-	<img src="./az.PNG" alt=" "> <img src="./ae.PNG" alt=" ">  <img src="./ar.PNG" alt=" "> -->
+	<img src="./az.PNG" alt=" "> <img src="./ae.PNG" alt=" ">  <img src="./ar.PNG" alt=" "> 
 	
-</pre>		
+</pre>		-->
 </body>
 </html>
