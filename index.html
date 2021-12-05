@@ -407,19 +407,47 @@ pre {
 	
 	<h3>	Interface</h3>
 		-Naviguer à la souris
-			-clic molette pour déplacer la caméra
-			//todo
-		-Preview
-			-clic droit set mesh
-			-Ça casse facilement
-		-Master
-			-Section Fragment
-				//todo
+			-clic molette pour déplacer la vue
+		
+		-Main Preview
+			<img src="./sg_preview.PNG" alt="sg_preview" onclick="zoompic(event)">
+			-clic droit dessus pour choisir sur quel mesh prévisualiser le shader
+			-Ça casse facilement, certains shaders pourront pas être prévisualisés correctement
+				-le look du shader qui compte vraiment c'est celui dans la scène.
+		
+		-Master Stack (anciennement master node)
+			<img src="./sg_master.PNG" alt="sg_master" onclick="zoompic(event)">
+			La master stack contient une liste de champs de propriétés qui décrivent le look du material auquel est appliqué le shader, pour chaque point à la surface des objets qui ont ce material. 
+			Le shader aura des nodes qui feront des calculs, et les résultats finaux de ces calculs seront raccordés à ces champs via des cables.
+			Il y a deux types de "points" à la surface des objets: les vertices, qui sont les sommets du mesh de l'objet, et les fragments, qui sont plus ou moins les pixels de l'objet visibles à l'écran.
 			-Section Vertex
-				//todo
+				La section Vertex de la master stack permet en gros de déplacer les vertices du mesh pour le déformer, et d'ajuster les normales et les tangentes pour les garder cohérentes avec la déformation.
+			-Section Fragment				
+				La section Fragment de la master stack permet de définir la couleur, transparence et l'éclairage pour chaque pixel visible de notre objet.
+			Comme on en est qu'à l'introduction du cours, pour l'instant on va juste dire que le champ Base Color permet de choisir la couleur de base du material. Les autres champs seront expliqués au cours des exemples plus loin.
+			Si on met rien dans ces champs, des valeurs par défaut seront utilisées.			
+		
 		-Graph Inspector
-			//todo
+			<img src="./sg_inspector.PNG" alt="sg_inspector" onclick="zoompic(event)">		<img src="./graph_inspector.PNG" alt="graph_inspector" onclick="zoompic(event)">
+			Le graph inspector permet de régler des paramètres importants du shadergraph.
+			On peut pour l'instant ignorer l'onglet "node settings" en haut, 
+			et aussi ignorer les champs Precision et Target Settings.
+			Les paramètres importants sont dans la section en dessous intitulée "Universal":
+				-le champ Material permet de décider si le shader subit l'éclairage (Lit) ou non (Unlit).
+				-le champ workflow permet de choisir entre le mode moderne PBR Metallic, ou l'ancien mode Specular qui permet de contrôler la couleur des réflexions séparément.
+				-le champ Surface permet de décider si le shader est de type Opaque ou Transparent.
+					-choisir l'option Transparent ajoute un champ Alpha à la master stack pour contrôler l'opacité
+					-certains nodes ne fonctionneront qu'en mode Transparent (Scene Color par exemple).
+				-la checkbox Alpha Clip nous permet de faire un shader de cut-out, même si le shader est en mode Opaque
+					-cocher cette option ajoute un champ Alpha et Alpha Clip Threshold à la master stack
+						-ce Alpha Clip Threshold (seuil de découpage alpha) permet de rentre tous les pixels avec une opacité sous ce seuil totalement transparents
+				-la checkbox Two-Sided permet de faire render les faces arrières ou internes (backfaces) des meshs
+				-les autres options sont ignorables pour l'instant
+				
+		<button type="button" class="collapsible">[vu plus tard] +</button>
+		<div class="content">
 		-Blackboard & properties externes
+			<img src="./sg_blackboard.PNG" alt="sg_blackboard" onclick="zoompic(event)">
 			//todo
 			-Valeurs par défaut
 				//todo
@@ -428,17 +456,18 @@ pre {
 			-Name vs Reference
 				//todo
 			//todo
+		
 		-Ports et cables
 			//todo
 			-nombre de cases
 				//todo
 			-Vecteurs XYZ, RGB
 				//todo
+		
 		-Créer des nodes
 			-Espace
-			-Clic droit > Create node
-		//todo
-		
+			-Clic droit > Create node		
+		</div>
 </pre><h2>ShaderLab</h2><pre>
 	//todo
 	
