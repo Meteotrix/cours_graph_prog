@@ -69,7 +69,8 @@ pre {
   margin: auto;
   display: block;
   /*scale: 500%;*/
-  /*max-width: 700px;*/
+  max-width: 70%;
+  max-height: 70%;
 }
 
 /* Caption of Modal Image */
@@ -196,61 +197,204 @@ pre {
 		On travaille avec URP parce que HDRP fonctionne pas sur mobile.
 			
 </pre>
-<h2>Les render pipelines</h2>
-<button type="button" class="collapsible">[incomplet] +</button>
-<div class="content">
+<h2>Le rendu et les shaders, définitions</h2>
 <pre>
-
 	Le rendu consiste à obtenir l'image d'une scène du point de vue d'une caméra.
+		Mais on peut aussi faire le rendu d'objets individuels.
+	Les images sont des grilles de pixels, où chaque pixel a une valeur exprimée en rgb.
 	Le rendu est effectué par une série de calculs à partir des données de notre scène.
 	Cette série d'étapes de calculs c'est ce qu'on appelle le pipeline graphique.
 
-	-Pipelines fixes vs programmables
-		Anciennement, les pipelines étaient configurables, mais pas programmables, et donc on avait pas beaucoup de flexibilité dans le déroulement du rendu. 
-		De nos jours on a l'option d'insérer des scripts dans le pipeline de rendu pour contrôler certaines étapes.
-		La dernière console à avoir un pipeline fixe était la Wii (2006).
-		-shaders définition
-			Ces scripts qui permettent de contrôler le rendu de nos objets, on appelle ça des shaders.
-			On peut typiquement contrôler la forme des objets, leur éclairage, couleur et transparence. Vertex par vertex, mais aussi pixel par pixel.
-			-familles de shaders
-				On peut regrouper les shaders courants en plusieurs familles:
-					-shaders de debug
-						//todo
-					-shaders "réalistes" old-school, donc par si réalistes que ça
-						//todo
-					-shaders réalistes modernes, qui suivent le principe du Physically-Based Rendering (PBR)
-						//todo
-					-shaders non-réalistes, souvent stylisés, cartoon, dits NPR (Non-Photo-Realistic)
-						//todo
-					-autres shaders, souvent pour des effets spécifiques.
-						//todo
-		-materials définition
-		-applications courantes
-	-Scènes et objets
+	Scènes et objets
 		-Pour simplifier, on suppose généralement qu'une scène est une liste d'objets visibles,
 		et que les objets sont des listes de triangles.
-		-À leur tour les triangles sont un trio de vertices qui ont des propriétés.
-	-Render loop
+		-À leur tour les triangles sont un trio de vertices qui ont des propriétés:
+			-position
+			-normale
+			-UVs
+			-tangente
+			-vertex color
+	
+	Render loop
 		Pour faire le rendu d'une scène en temps réel, typiquement on calcule plusieurs images par seconde, typiquement 60 par seconde, 
-		mais ça dépend de la fréquence d'affichage de l'écran, on a souvent 120fps de nos jours par exemple.
+		mais ça dépend de la fréquence d'affichage de l'écran, on a souvent 120fps de nos jours par exemple.		
 		
-		-Refresh
-			//todo
-			-Front buffer & Back buffer
-				//todo
-			-VSync
-				//todo
-				-Tear lines
-					//todo
+		-(Le cycle de raffraichissement de l'écran)
+			<button type="button" class="collapsible">[détails techniques] +</button>
+			<div class="content">
+			60 fois par seconde, notre moteur graphique va calculer une image constituée de pixels, et envoyer ça à l'écran pour l'afficher.
+			
+			En fait, en mémoire, l'image est une liste avec des valeurs numériques pour les couleurs tous les pixels de l'image.
+			Cette liste doit être remplie avec ces valeurs de couleurs, et une fois que la liste est remplie, on peut l'envoyer à l'écran par le câble depuis la carte graphique.
+			Sauf que si le rendu prend trop longtemps,
+			le temps qu'il faut pour calculer chaque image peut prendre plus longtemps que l'intervalle de temps disponible avant l'affichage par l'écran de l'image suivante, et on affiche des images moins souvent que 60 fois par seconde.
+
+			Et là on a deux possibilités:
+				-Soit avoir de la synchro verticale (VSync), 
+				ce qui veut dire attendre qu'une image soit finie avant de l'afficher à l'écran, ce qui veut dire garder l'image précédente à l'écran en attendant que la nouvelle arrive.
+				-Soit ne pas avoir de vsync, 
+				ce qui veut dire envoyer l'image actuellement entre train d'être rendue même si elle est incomplète, 
+				ce qui permet d'avoir au moins la moitié de l'image mise à jour, mais ça crée un artefact graphique appelé une "tear line" (ligne de déchirure) typiquement horizontale au milieu de l'écran.
+				
+			En fait en interne, quand on est en train de faire le rendu d'une image, la liste des valeurs des pixels part dans une zone mémoire appelée le back buffer, 
+			et l'image qui est actuellement affichée à l'écran est stockée dans une zone appelée le front buffer au cas où on a besoin de l'envoyer à l'écran plusieurs fois. 
+			Et ce qui se passe quand on affiche une nouvelle image à l'écran, c'est qu'on inverse le front et le back buffer, 
+			c'est à dire qu'en fait on a deux zones mémoires A et B qui sont utilisées en alternance pour stocker l'image en cours de rendu, et l'image en cours d'affichage.
+			</div>
 		-Draw calls
 			Ce qui est envoyé dans le pipeline de rendu c'est typiquement une liste de vertices, qui vont constituer nos triangles. 
 			Ils peuvent aussi consistuer d'autres types de primitives, comme des lignes, des éventails de triangles, mais on va pas s'y intéresser. 
-			Ces vertice sont donnés au pipeline avec leurs propriétés (position, UVs, normales, etc.). 
-			À chaque fois qu'on envoie des vertices dans le pipeline, ça s'appelle un draw call (en interne, le moteur appelle la fonction Draw(), qui prend nos vertices et les passe à la carte graphique).
+			Ces vertices sont donnés au pipeline avec leurs propriétés (position dans la scène, UVs, normales, etc.). 
+			À chaque fois qu'on envoie des vertices dans le pipeline, ça s'appelle un draw call, parce qu'en interne, le moteur appelle la fonction Draw(), qui prend nos vertices et les passe à la carte graphique.
 			-Batching
-				Pour des raisons de performance, on a tendance à grouper les vertices qui ont le même material avant de les envoyer dans le pipeline, même si ces vertices appartiennent à des meshs différents. On appelle ça le batching ("batch" veut dire "fournée" en anglais, cf faire des cookies au four). Ça permet de réduire le nombre de draw calls.
-		-(Forward Rendering vs Deferred Rendering)
-			//todo
+				Pour des raisons de performance, on a tendance à grouper les vertices qui ont le même material, pour les envoyer dans le pipeline en même temps, même si ces vertices appartiennent à des meshs différents. 
+				On appelle ça le batching ("batch" veut dire "fournée" en anglais, comme faire des cookies au four). 
+				Ça permet de réduire le nombre de draw calls.
+					Ça améliore les performances parce qu'à chaque draw call il faut reconfigurer le pipeline en chargeant un nouveau shader, des nouvelles textures, changer divers paramètres de rendus, entre autres.
+		
+		-(Forward Rendering vs Deferred Rendering)			
+			<button type="button" class="collapsible">[détails techniques] +</button>
+			<div class="content">
+			C'est bon de savoir de quoi il retourne quand on parle des méthodes de forward et de deferred rendering,
+			parce que parfois on a des problèmes qui sont causés par ces méthodes, 
+			mais c'est pas le plus prioritaire non plus donc vous pouvez ignorer si vous êtes fatigué.es.
+			Je vais brutalement simplifier l'explication, mais donc :
+			
+			La méthode naïve pour organiser le rendu des objets,
+			c'est de faire le rendu des objets un par un,
+			et pour chaque objet, de prendre les contributions de chaque lumière, une par une,
+			ce qui fait par exemple, que pour 30 objets et 30 lumières, on a 30x30 == 900 "étapes de rendu".
+			C'est ce qu'on appelle le Forward Rendering.
+			
+			Il existe une façon d'accélérer le rendu, appelé le Deferred Rendering (rendu différé, où on diffère l'application des lumières jusqu'à la fin du processus de rendu),
+			où on commence en fait par "fusionner" tous les objets de la scène en 1 objet qui couvre tout l'écran.
+			Cette fusion prend la forme d'un pré-rendu de la scène, stocké dans une texture appelée un G-buffer.
+			Et une fois les objets fusionnés en 1, quand on veut appliquer les lumières, 
+			on a plus que 1x30 == 30 "étapes de rendu", vu que les lumières s'appliquent à 1 seul objet.
+			En fait on a 30+30 == 60 étapes de rendu parce que la fusion nécessite de faire le tour de tous les objets au départ, mais 60 c'est beaucoup plus rapide que 900 en tout cas.
+			Cependant, le deferred rendering ne permet pas de bien gérer les objets transparents (pas aussi faciles à fusionner), 
+			donc ceux-là sont toujours rendus avec la logique du forward rendering. 
+			Ça complexifie aussi l'anti-aliasing, et d'autres détails.
+			</div>
+	
+	Pipelines fixes vs programmables
+		Anciennement, les pipelines étaient configurables, mais pas programmables, et donc on avait pas beaucoup de flexibilité dans le déroulement du rendu. 
+		De nos jours on a l'option d'insérer des scripts dans le pipeline de rendu pour contrôler certaines étapes.
+		La dernière console à avoir un pipeline fixe était la Wii (2006).
+		Ces scripts qui permettent de contrôler le rendu de nos objets, on appelle ça des shaders.
+		
+	Shaders		
+		Les shaders permettent typiquement contrôler la forme des objets, leur éclairage, couleur et transparence. Vertex par vertex, mais aussi pixel par pixel.
+		-familles de shaders
+			On peut regrouper les shaders courants en plusieurs familles:
+				-shaders de debug
+					On a parfois besoin d'afficher les données de nos objets pour les vérifier (positions, vecteurs, UVs, résultats de calculs intermédiaires, etc.), et on peut parfois les afficher sous forme de couleur par exemple.
+					Ces shaders servent surtout pendant le dev, et pas dans le build final.
+					<img src="./debug.PNG" alt="debug" onclick="zoompic(event)">
+				-shaders "réalistes" old-school/retro (donc par si réalistes que ça de nos jours).
+					<img src="./flat.PNG" alt="flat" onclick="zoompic(event)">
+				-shaders réalistes modernes, qui suivent le principe du Physically-Based Rendering (PBR)
+					On a pas tellement besoin d'apprendre à en faire nous-mêmes de cette catégorie,
+					c'est à ça que sert le shader de material standard de unity.
+					<img src="./pbr.PNG" alt="pbr" onclick="zoompic(event)">
+				-shaders non-réalistes, souvent stylisés, cartoon, dits NPR (Non-Photo-Realistic)
+					<img src="./cartoon.PNG" alt="cartoon" onclick="zoompic(event)">
+				-autres shaders, souvent pour des effets particuliers.
+					<img src="./fx.PNG" alt="fx" onclick="zoompic(event)">
+		
+		-Materials
+			Si un shader est un script qui sert à contrôler le rendu d'un material,
+			alors le material fait faire le rendu par le shader, en lui disant quelles valeurs utiliser.
+			Les materials eux-mêmes contiennent donc 2 informations:
+				-quel shader le material utilise pour être rendu
+				-une liste de valeurs de paramètres à donner à ce shader pour le rendu
+			Exemple:
+				un champ de force peut avoir un look calculé par un shader,
+				mais on peut avoir plusieurs variantes de champ de force, avec des propriétés différentes:
+					-l'un peut être bleu
+					-un autre rouge avec des textures différentes
+					-un autre noir avec des options supplémentaires
+				et ces trois variantes peuvent être trois materials différents,
+				qui utilisent tous le même shader de champ de force,
+				mais chacun aura des valeurs différentes pour la couleur, les textures, etc.
+		
+		-Exemples d'applications courantes
+			Nature et magie élémentaires :
+				Feu, flammes, explosions, lave, lumière
+					<img src="./feu.PNG" alt="feu" onclick="zoompic(event)">	<img src="./nuke.PNG" alt="nuke" onclick="zoompic(event)">
+				Eau, bulles, caustiques, cascades, acide
+					<img src="./cascade.PNG" alt="cascade" onclick="zoompic(event)">
+				Vent et fantômes, fumée, magie ombre
+					<img src="./storm.PNG" alt="storm" onclick="zoompic(event)">
+				Glace, neige
+					<img src="./ice.PNG" alt="ice" onclick="zoompic(event)">
+				Électricité, éclairs
+					<img src="./bolt.PNG" alt="bolt" onclick="zoompic(event)">
+				Herbe
+				Cristaux et roches, sable
+					<img src="./sand.PNG" alt="sand" onclick="zoompic(event)">	<img src="./crystal.PNG" alt="crystal" onclick="zoompic(event)">
+			Science & Fiction :
+				Champs de force
+					<img src="./shield.PNG" alt="shield" onclick="zoompic(event)">
+				Portails, Téléporteurs
+					<img src="./portal.PNG" alt="portal" onclick="zoompic(event)">
+				Hologrammes et invisibilité
+				Lasers
+				Désintégration
+			Styles :
+				Cel-shading et cartoon
+					<img src="./cel_shading.PNG" alt="cel_shading" onclick="zoompic(event)">
+				Contours
+					<img src="./outline.jpg" alt="outline" onclick="zoompic(event)">
+				Dithering & pixel-art auto
+					<img src="./obra_dinn.PNG" alt="obra_dinn" onclick="zoompic(event)">
+				Filtres : palettes couleur, négatifs, etc.
+					<img src="./visor.jpg" alt="visor" onclick="zoompic(event)">
+			Catégories spéciales :
+				Effets volumétriques (light shafts, fumée, brouillard, nuages, ...)
+				Intégration (traces dans le sable ou la neige, flammes enveloppantes, éclairs)
+				Particules
+				Rendu multi-passe (voir au travers des murs, contours doux, ...)
+				Post-processing (profondeur de champ, bloom, tone-mapping, ...)
+		
+		-Quelques tutoriels ShaderGraph Populaires de 2019
+			Brackeys
+				<a href="https://www.youtube.com/watch?v=KGGB5LFEejg">HOLOGRAM using Unity Shader Graph</a>
+				<a href="https://www.youtube.com/watch?v=NiOGWZXBg4Y">FORCE FIELD in Unity - SHADER GRAPH</a>
+				<a href="https://www.youtube.com/watch?v=taMp1g1pBeE">DISSOLVE using Unity Shader Graph</a>
+				
+			Gabriel Aguiar Prod.
+				<a href="https://www.youtube.com/watch?v=hTJqo1HeEOs">Unity Shader Graph - Shield Effect Tutorial</a>
+				<a href="https://www.youtube.com/watch?v=yJ0NRr-DdYU">Unity Shader Graph - Waterfall Effect Tutorial</a>
+				<a href="https://www.youtube.com/watch?v=glSsaRpHKos">Unity Shader Graph - Fire Flames Shader Tutorial</a>
+				<a href="https://www.youtube.com/watch?v=28MQrE7fUk4">Unity Shader Graph - Nuke Explosion Effect Tutorial</a>
+				<a href="https://www.youtube.com/watch?v=w0znZIuvQ2I">Unity Shader Graph - Portal Shader Tutorial</a>
+				<a href="https://www.youtube.com/watch?v=Qyh9RPxeKcA">Unity Shader Graph - Tornado Shader Effect Tutorial</a>
+				<a href="https://www.youtube.com/watch?v=u9lOaPVtSqg">Unity Shader Graph - Electricity Shader Effect Tutorial</a>
+				<a href="https://www.youtube.com/watch?v=mGd3nYXj1Oc">Unity Shader Graph - Laser Beam Tutorial</a>
+
+			Binary Impact
+				<a href="https://www.youtube.com/watch?v=rlGNbq5p5CQ">Unity Shadergraph Tutorial - Cracked Ice</a>			
+
+			Code Monkey
+				<a href="https://www.youtube.com/watch?v=6AKR4b4C5j">Shield Force Field - Shader Graph Tutorial</a>
+
+			AE Tuts
+				<a href="https://www.youtube.com/watch?v=IzvKGsdByFk">Water ball explosion using shader graph Unity 3D</a>
+				<a href="https://www.youtube.com/watch?v=nhYrtvT543w">Water fountain using shader graph (part ½)</a>
+				<a href="https://www.youtube.com/watch?v=EELbMlnOzQE">Glass/Water Refractive Shader in Unity using Shader Graph</a>
+
+			PolyToots
+				<a href="https://www.youtube.com/watch?v=WdxBJVCBr_A">Unity Shader Graph: Crystals!</a>
+				<a href="https://www.youtube.com/watch?v=r1yrkZn1owg&t=524s">[Part 2] Burning + Dissolve Shader in Unity.</a>
+
+	
+</pre>
+<h2>Les étapes du render pipeline</h2>
+<button type="button" class="collapsible">[incomplet] +</button>
+<div class="content">
+<pre>
+	
 	-Vertex properties
 		-position
 		-normales
@@ -318,7 +462,7 @@ pre {
 					-Transposer des matrices
 				-Vecteurs position vs Vecteurs direction
 					-Coordonnées Homogènes W						
-	//Rasterization
+	-Rasterization
 		-Clip space -> Screen space
 		-test d'inclusion de pixel dans un triangle
 			-coordonnées barycentriques
@@ -427,24 +571,31 @@ pre {
 			Comme on en est qu'à l'introduction du cours, pour l'instant on va juste dire que le champ Base Color permet de choisir la couleur de base du material. Les autres champs seront expliqués au cours des exemples plus loin.
 			Si on met rien dans ces champs, des valeurs par défaut seront utilisées.			
 		
-		-Graph Inspector
-			<img src="./sg_inspector.PNG" alt="sg_inspector" onclick="zoompic(event)">		<img src="./graph_inspector.PNG" alt="graph_inspector" onclick="zoompic(event)">
+		-Graph Inspector<table><tr><td style="height: 450px; vertical-align: top;">
+			<img src="./sg_inspector.PNG" alt="sg_inspector" onclick="zoompic(event)">					
 			Le graph inspector permet de régler des paramètres importants du shadergraph.
 			On peut pour l'instant ignorer l'onglet "node settings" en haut, 
 			et aussi ignorer les champs Precision et Target Settings.
 			Les paramètres importants sont dans la section en dessous intitulée "Universal":
 				-le champ Material permet de décider si le shader subit l'éclairage (Lit) ou non (Unlit).
-				-le champ workflow permet de choisir entre le mode moderne PBR Metallic, ou l'ancien mode Specular qui permet de contrôler la couleur des réflexions séparément.
+				-le champ workflow permet de choisir entre le mode moderne PBR Metallic, 
+				ou l'ancien mode Specular qui permet de contrôler la couleur des réflexions séparément.
 				-le champ Surface permet de décider si le shader est de type Opaque ou Transparent.
 					-choisir l'option Transparent ajoute un champ Alpha à la master stack pour contrôler l'opacité
 					-certains nodes ne fonctionneront qu'en mode Transparent (Scene Color par exemple).
 				-la checkbox Alpha Clip nous permet de faire un shader de cut-out, même si le shader est en mode Opaque
 					-cocher cette option ajoute un champ Alpha et Alpha Clip Threshold à la master stack
-						-ce Alpha Clip Threshold (seuil de découpage alpha) permet de rentre tous les pixels avec une opacité sous ce seuil totalement transparents
+						-ce Alpha Clip Threshold (seuil de découpage alpha) permet de
+						rendre tous les pixels avec une opacité sous ce seuil totalement transparents
 				-la checkbox Two-Sided permet de faire render les faces arrières ou internes (backfaces) des meshs
-				-les autres options sont ignorables pour l'instant
+				-les autres options sont ignorables pour l'instant </td> 
+				<td><img src="./graph_inspector.PNG" alt="graph_inspector" onclick="zoompic(event)" style="height: 400px; vertical-align: bottom;">
+				</td>
+				</tr>
+			</table>
+			
 				
-		<button type="button" class="collapsible">[vu plus tard] +</button>
+		<button type="button" class="collapsible">[vu plus loin] +</button>
 		<div class="content">
 		-Blackboard & properties externes
 			<img src="./sg_blackboard.PNG" alt="sg_blackboard" onclick="zoompic(event)">
