@@ -547,7 +547,7 @@ pre {
 			-avec un drag and drop ça marche
 				<img src="./drag_mat_to_go.PNG" alt="drag_mat_to_go" onclick="zoompic(event)">
 		-Cocher Always Refresh pour les shaders animés
-			<img src="./always_refresh.PNG" alt="always_refresh" onclick="zoompic(event)">
+			<img src="./always_refresh.png" alt="always_refresh" onclick="zoompic(event)">
 	
 	<h3>	Interface</h3>
 		-Naviguer à la souris
@@ -649,6 +649,7 @@ pre {
 	//todo
 
 </pre> --><h2>Texturing</h2><pre>
+	<a href="https://drive.google.com/file/d/1zMz4b5UO-ccquYR11yXr2dO9rliBPMgJ/view?usp=sharing">video drive</a>
 	//todo
 	-node Sample Texture 2D
 		//todo
@@ -665,11 +666,23 @@ pre {
 			//todo
 	
 </pre><h2>Couleur et Luminosité</h2><pre>
-	-multiplier une texture monochrome avec une couleur
-		-canal par canal
-			-rgba1 * rgba2 = r1 * r2, g1 * g2, b1 * b2, a1 * a2.
+	-Dans les shaders, les couleurs sont représentées en rgb avec des nombres à virgule, compris entre 0 et 1.
+		-par exemple le gris moyen a les valeurs rgb -> (0.5, 0.5, 0.5)
+		-et le blanc a pour valeur (1, 1, 1)
+	
+	-Quand on multiplie des couleurs entre elles (ou des vecteurs, de façon plus générale)
+		//todo add screenshot
+		-ça se fait canal par canal
+			-càd qu'on multiplie le rouge avec le rouge, le vert avec le vert, et le bleu avec le bleu
+				-rgba1 * rgba2 = (r1 * r2, g1 * g2, b1 * b2, a1 * a2)
+			-ou dans le cas de vecteurs xyz, on multiplie de la même façon et on obtient (x1 * x2, y1 * y2, z1 * z2)
 		-le node multiply s'adapte au nombre de cases qu'on lui fournit en entrée
+			de telle façon à ce que les deux choses qu'on multiplie aient bien le même nombre de cases
+		//todo expliquer les types de données de base de shadergraph, les cables et les ports
+	
 	-différence entre valeurs linéaires et valeurs couleur avec correction gamma
+		<button type="button" class="collapsible">[incomplet, basse priorité] +</button>
+		<div class="content">
 		-shader graph fait la distinction entre les valeurs couleur
 			et les valeurs non-couleur, dites "linéaires".
 		-les valeurs linéaires sont des valeurs qui augmentent en ligne droite
@@ -694,7 +707,10 @@ pre {
 			-pour que les valeurs sombres à l'origine occupent dans la palette la place des gris clairs, ce qui permet de préserver les valeurs sombres
 			-quand on veut lire un fichier avec des couleurs dedans, on décode
 			-le décodage ré-assombrit les valeurs avec gamma à 2.2
+		</div>
 	-HDR
+		<button type="button" class="collapsible">[incomplet, basse priorité] +</button>
+		<div class="content">
 		HDR veut dire "high dynamic range", ou "haute gamme dynamique" en français.
 			Ça s'oppose au LDR (low dynamic range), qui est l'encodage typique de couleurs.
 			En LDR, on a 256 niveau de luminosité possibles par canal couleur.
@@ -717,7 +733,7 @@ pre {
 		-tone-mapping
 			-ACES
 				//todo
-			-ça permet de se faire
+		</div>
 	
 
 </pre><h2>Animations</h2><pre>
