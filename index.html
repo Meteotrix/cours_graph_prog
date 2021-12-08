@@ -648,25 +648,110 @@ pre {
 		//todo
 	//todo
 
-</pre> --><h2>Texturing</h2><pre>
-	<a href="https://drive.google.com/file/d/1zMz4b5UO-ccquYR11yXr2dO9rliBPMgJ/view?usp=sharing">lien drive</a>
+</pre> --><h2>Warning pour les vidéos ci-dessous</h2><pre>
+	Les vidéos datent de 2019 pour la plupart donc:
+		-l'interface est un peu différente
+			-master node au lieu de master stack dans shader graph
+			-les options du shader sont situées dans le graph inspector au lieu de l'icone engrenage du node master maintenant
+			-les options des propriétés du blackboard ne sont plus listées sous les propriétés elles-mêmes,
+				mais dans l'onglet node settings du panneau graph inspector
+			-...
+		-certains soucis abordés n'existent plus
+			-souci avec la différence entre nom de property et référence de property dans le blackboard
+			-performances de l'interface quand on anime via la fenêtre animation
+			-...
+		-certains nodes fonctionnent différemment
+			-flipbook
+				-modulo automatique
+				-arrondi automatique
+			-...
+		-...
+</pre><h2>Texturing</h2><pre>
+	<!-- <a href="https://drive.google.com/file/d/1zMz4b5UO-ccquYR11yXr2dO9rliBPMgJ/view?usp=sharing">lien drive</a>
 	vs 
-	embed youtube:
+	embed youtube: -->
 	<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/R799a0IIucM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	//todo
-	-node Sample Texture 2D
-		//todo
-	-node Tiling & Offset
-		//todo
-	-node Sampler State				
-		//todo
-	-Textures procédurales
-		-node Checkerboard
-			//todo
-		-node Simple noise / Gradient noise
-			//todo
-		-node Voronoi
-			//todo
+		0:00 - intro + workflow
+			-la vidéo va parler de texture sampling (échantillonnage de texture)
+			-c'est un recap d'un cours en présentiel précédent (de 2019)
+			-création de shadergraph+material
+				-menu différent, de nous jours les shadergraphs sont listés sous Assets > Create > Shader > Universal Render Pipeline
+			-application de shader sur objet
+			-ouverture de shadergraph
+		1:08 - importer des textures
+			-via drag and drop depuis la fenêtre project vers la fenêtre shader graph
+			-node Sample Texture 2D
+				-son port de sortie RGBA peut être raccordé au champ Base Color du master
+			-on peut changer quelle texture est samplée par le champ sélecteur du port d'entrée Texture2D
+			-on peut créer un node Texture 2D Asset séparé pour distribuer la même texture vers plusieurs nodes Sample Texture 2D
+		2:58 - blackboard
+			-on peut donner une texture au shader via les Properties
+				-elles sont crées dans le menu Blackboard
+					-via le gros bouton +
+				-on peut drag and drop une property de type Texture2D dans le graphe
+					-et refiler ça au node Sample Texture2D
+				-les Properties sont faites pour être visibles/exposées dans l'éditeur de Unity
+					-y'a un -PIEGE-, c'est la valeur donnée à la property dans l'éditeur de unity qui a la priorité
+						-et pas une éventuelle valeur par défaut choisie dans le shadergraph lui-même
+		5:04 - UVs
+			-Sample Texture 2D utilise les UVs par défaut du mesh par défaut si on lui raccorde pas d'UVs particulières
+			-par exemple on peut raccorder un node Tiling & Offset au champ UV de Sample Texture2D
+				-Tiling & Offset permet de faire répéter la texture via le tiling
+				-ça peut décaler la texture via l'offset
+			-si on veut faire scroll une texture dans le temps, on peut raccorder un node Time (time) dans le champ Offset de Tiling & Offset
+				-Quand on alimente des champs qui réclament N champs avec des cables qui viennent de nodes qui donnent 1 champ
+					-ça copie la 1 valeur dans chacun des N champs
+					-et c'est pour ça que si on met time dans Offset, ça met time dans x et time dans y, et donc ça bouge en diagonale
+			-Time c'est le nombre de secondes depuis le début de la scène
+				-0 secondes, 0.5s, 1s, 1.24s, etc.
+			-Le node twirl permet de déformer les textures en mode tourbillon
+			-Le node rotate permet de faire tourner des UVs
+			-Le node polar coordinates est pas expliqué dans ce cours
+		9:20 - sampler states
+			-on peut raccorder un node Sampler State dans le champ Sampler du node Sample Texture 2D
+			-ça permet de contrôler le mode de filtrage de la texture
+				-point filtering / nearest, ça donne des texels visibles carrés, cf le look de minecraft
+				-linear filtering / bilinear, ça donne des texels lissés en faisant une moyenne des 4 texels les plus proches pour chaque fragment de notre objet
+				-trilinear c'est mieux que bilinear, mais ça se voit à peine
+			-le wrap mode ça détermine comment le sampling se comporte quand on sort de l'espace UV
+				-repeat ça fait se répéter la texture telle quelle quand on atteint le bord
+				-clamp empêche les UVs de dépasser l'intervalle [0;1]
+					-et donc quand on observe en dehors de l'intervalle 01 avec clamp, on voit le dernier texel sur le bord se répéter
+				-mirror ça fait se répéter la texture mais en mode pingpong / miroir
+				-mirror once ça fait se répéter la texture une fois et ensuite ça clamp
+		13:57 - normal maps
+			-le paramètre Type de Sample Texture 2D:
+				-Default c'est pour sampler des textures couleur
+				-Normal c'est pour sampler des normal maps spécifiquement
+			-le paramètre Space c'est pour les normal maps
+				-par défaut les normal maps sont exprimées en tangent space
+					-d'où le fait que le champ soit réglé sur Tangent par défaut
+					-c'est les normal maps sur fond bleu/violet habituelles
+				-l'option Object c'est pour les normal maps en object-space
+					-mais c'est plus rare
+					//todo insert screenshot			
+		16:18 - conflit entre clamp et scrolling
+			-essayer de faire scroll une texture qui est en wrapmode clamp, ça casse le scrolling et tiling
+		17:09 - problème de Time
+			-Si vous avez besoin de reset la valeur de Time, vous pouvez lancer/relancer puis arrêter votre scène
+		18:50 - problème d'animation qui joue pas dans la vue Scène
+			-(en 2019)parfois les shaders s'animent pas même si Always Refresh est coché
+				-y'a des manips relou faisables [...]
+		20:22 - problème de Preview
+			-ignorer les previews cassés, certains shaders /ne peuvent pas/ être preview correctement
+				-regarder le résultat dans la scène directement
+		21:03 - problème de cutout transparent
+			-les textures qui sont opaques d'un côté, transparent de l'autre, et qui sont en wrapmode repeat et en filtermode linear/trilinear, peuvent avoir des lignes moches qui se forment autour des bords transparents
+				//todo mettre screenshot
+				-les lignes apparaissent pas avec le wrapmode en clamp, ou le filtermode en nearest
+				-la raison pour laquelle ça se produit c'est qu'en filtermode linear les fragments au bord de l'objet vont avoir une couleur/transparence qui est une moyenne des 4 texels voisins, 
+				mais sur le bord, les texels voisins sont en dehors de l'espace UV, 
+				et donc si on est en wrapmode, ça va aller chercher les texels de l'autre côté de la texture, qui sont opaques,
+				donc nos fragments sur le bord ont une transparence qui est une moyenne entre des texels transparents et des texels opaques sont ils seront *un peu* opaques,
+				et donc pas totalement transparents
+			-les wrapmode et filtermode sont aussi réglables sur les options d'importation sur l'asset lui-même
+		25:30 - outro 
+			-recap des sujets vus ^	
 	
 </pre><h2>Couleur et Luminosité</h2><pre>
 	-Dans les shaders, les couleurs sont représentées en rgb avec des nombres à virgule, compris entre 0 et 1.
@@ -740,7 +825,27 @@ pre {
 	
 
 </pre><h2>Animations</h2><pre>
+	<iframe width="560" height="315" src="https://www.youtube.com/embed/bUzLpvbZZaU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+		0:00 - intro
+		1:00 - nodes de textures procédurales
+		2:45 - couleur via multiply
+		3:45 - luminosité via multiply
+		4:14 - propriétés
+		5:46 - contraste
+		10:40 - sin(time)
+		11:08 - node remap
+		12:35 - appliquer les variations via multiply
+		13:50 - outro
+		14:04 - node hue (teinte)
+
 	//todo
+	-Textures procédurales
+		-node Checkerboard
+			//todo
+		-node Simple noise / Gradient noise
+			//todo
+		-node Voronoi
+			//todo
 	-node Time
 		//todo
 		-float precision
@@ -758,12 +863,44 @@ pre {
 	-Contrôle externe
 		//todo
 		-Depuis la fenêtre animation
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/FB3prTz6CJE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				0:00 - intro
+				1:38 - la fenêtre animation
+				2:27 - nom vs référence de propriété
+				5:48 - animation via keyframes et courbes
+				9:42 - souci de performance de l’interface
 			//todo
 		-Depuis un script
 			//todo
 	-Texture flipbook
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/B6pC-Ay3hqo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			0:00 - intro
+			1:20 - posterize
+			3:40 - reimplem posterize avec floor
+			6:08 - pourquoi ceiling est pas mieux que floor/posterize
+			6:49 - round
+			7:30 - factorisation
+			9:44 - outro
+			
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/IfAhmEvvMYM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			0:00 intro
+			0:30 qu'est-ce qu'un flipbook
+			1:37 récupérer la texture depuis le site de unity
+			2:28 textures HDR
+			3:00 setup
+			3:51 node flipbook
+			5:27 indices de tiles (time*60)
+			9:42 floor
+			10:31 Time est instable
+			12:55 reset de Time
+			15:05 QA AAA
+			15:58 ?
+			16:43 invert xy
+			18:00 modulo
+			22:14 alpha
+			23:15 correction de boucle
+			24:37 outro
 		//todo
-	//todo
 		
 </pre><h2>Éclairage direct</h2><pre>
 	//todo
@@ -862,7 +999,13 @@ pre {
 	//todo
 </pre><h2>Faire une vidéo</h2><pre>
 	-vidéo avec OBS et recorder
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/oB5DHcYDf9M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			00:00 - Unity Recorder (13 minutes) - Essayez déjà ça avant de passer à la suite
+			13:10 - OBS Studio (19 minutes)
+			32:30 - Trouble-shooting OBS (5minutes)
+		
 	-vidéo top qualité sur machine basses-perfs
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/jfC-LEbHdJs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </pre>
 <script>
 
