@@ -729,7 +729,8 @@ pre {
 					-c'est les normal maps sur fond bleu/violet habituelles
 				-l'option Object c'est pour les normal maps en object-space
 					-mais c'est plus rare
-					//todo insert screenshot			
+					-on peut aussi avoir des normal maps dans d'autres espaces, mais après il faut utiliser le node transform pour convertir entre les référentiels.
+					<img src="./normal_spaces.png" alt="normal_spaces" onclick="zoompic(event)"></img>
 		16:18 - conflit entre clamp et scrolling
 			-essayer de faire scroll une texture qui est en wrapmode clamp, ça casse le scrolling et tiling
 		17:09 - problème de Time
@@ -741,8 +742,8 @@ pre {
 			-ignorer les previews cassés, certains shaders /ne peuvent pas/ être preview correctement
 				-regarder le résultat dans la scène directement
 		21:03 - problème de cutout transparent
-			-les textures qui sont opaques d'un côté, transparent de l'autre, et qui sont en wrapmode repeat et en filtermode linear/trilinear, peuvent avoir des lignes moches qui se forment autour des bords transparents
-				//todo mettre screenshot
+			-les textures qui sont opaques d'un côté, transparent de l'autre, et qui sont en wrapmode repeat et en filtermode linear/trilinear, peuvent avoir des lignes moches qui se forment autour des bords transparents :
+				<img src="./repeat_and_bilinear_cutout.PNG" alt="repeat_and_bilinear_cutout" onclick="zoompic(event)"></img>
 				-les lignes apparaissent pas avec le wrapmode en clamp, ou le filtermode en nearest
 				-la raison pour laquelle ça se produit c'est qu'en filtermode linear les fragments au bord de l'objet vont avoir une couleur/transparence qui est une moyenne des 4 texels voisins, 
 				mais sur le bord, les texels voisins sont en dehors de l'espace UV, 
@@ -903,7 +904,8 @@ pre {
 		//todo
 		
 </pre><h2>Éclairage direct</h2><pre>
-	//todo
+	<a href="https://docs.google.com/document/d/1pkAA0FkpNavgtoPLtIk4Z-p3iFoPKCcclpU_e-i6BH8/edit?usp=sharing">DOC DE COURS</a>
+	
 	-Phong shading
 		//todo
 		-éclairage oldschool
@@ -923,7 +925,8 @@ pre {
 	//todo
 		
 </pre><h2>Cel Shading</h2><pre>
-	//todo
+	//todo link video + écrire transcript
+	
 	-exemples
 		-Zelda WindWaker
 			//todo
@@ -944,7 +947,7 @@ pre {
 	//todo
 			
 </pre><h2>Outlines</h2><pre>
-	//todo
+	//todo 	
 	-exemples
 		-Okami
 			//todo
@@ -973,7 +976,7 @@ pre {
 	//todo
 		
 </pre><h2>Dithering</h2><pre>
-	//todo
+	//todo link video
 	
 </pre><h2>Eau</h2><pre>
 	//todo
