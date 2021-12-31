@@ -138,13 +138,12 @@ pre {
 			-luminosité
 			-animation
 			-transparence
-			//-éclairage direct
-			//-outlines
+			-éclairage direct
+			-outlines
 			//-dithering
-			//-eau
-		-comment faire une vidéo
-		
-	//Si il y a des sections dédiées Game Prog ou Game Art, elles auront respectivement un fond bleu (GP), ou vert (GA).
+			-eau
+		-comment faire une vidéo		
+	<!-- //Si il y a des sections dédiées Game Prog ou Game Art, elles auront respectivement un fond bleu (GP), ou vert (GA). -->
 </pre>
 <h2>Ressources</h2><pre>
 	La majorité de ces ressources sont incomplètes, et ont surtout servi pour dépanner, mais il y a certains liens qui sont plutôt précieux.
@@ -659,12 +658,7 @@ pre {
 		<!-- -certains soucis abordés n'existent plus
 			-souci avec la différence entre nom de property et référence de property dans le blackboard
 			-performances de l'interface quand on anime via la fenêtre animation
-			-... -->
-		-certains nodes fonctionnent différemment
-			-flipbook
-				-modulo automatique
-				-arrondi automatique
-			-...
+			-... -->		
 		-...
 </pre><h2>Texturing</h2><pre>
 	<!-- <a href="https://drive.google.com/file/d/1zMz4b5UO-ccquYR11yXr2dO9rliBPMgJ/view?usp=sharing">lien drive</a>
@@ -826,6 +820,9 @@ pre {
 	
 
 </pre><h2>Animations</h2><pre>
+	Autant on a déjà animé des textures avec du scrolling, autant on a d'autres façons de faire varier des valeurs dans le temps pour animer.
+	Par exemple on peut faire un cycle d'animation de la luminosité des couleurs avec la fonction sinus(temps).
+	Vidéos de 2020:
 	<iframe width="560" height="315" src="https://www.youtube.com/embed/bUzLpvbZZaU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 		0:00 - intro
 		1:00 - nodes de textures procédurales
@@ -839,41 +836,32 @@ pre {
 		13:50 - outro
 		14:04 - node hue (teinte)
 
-	//todo
-	-Textures procédurales
-		-node Checkerboard
-			//todo
-		-node Simple noise / Gradient noise
-			//todo
-		-node Voronoi
-			//todo
-	-node Time
-		//todo
-		-float precision
-			//todo
-			-video minecraft
-				//todo
-	-Scrolling UVs
-		//todo
-	-Luminosité et contraste
-		//todo
-		-Multiply
-			//todo
-		-Power
-			//todo
 	-Contrôle externe
-		//todo
+		On peut contrôler les valeurs des propriétés des shaders depuis l'extérieur du shader, par exemple:
 		-Depuis la fenêtre animation
+			//todo texte
 			<iframe width="560" height="315" src="https://www.youtube.com/embed/FB3prTz6CJE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 				0:00 - intro
 				1:38 - la fenêtre animation
 				2:27 - nom vs référence de propriété
 				5:48 - animation via keyframes et courbes
 				9:42 - souci de performance de l’interface
-			//todo
 		-Depuis un script
 			//todo
+			
 	-Texture flipbook
+		ATTENTION, le node Flipbook fonctionne différemment maintenant.
+		
+		Je vous mets la version moderne de l'usage ici:
+		<img src="./final_flipbook_shader.PNG" alt =" " onclick="zoompic(event)">
+		La différence principale c'est qu'on a besoin de faire moins de calculs entre Time et le node flipbook.
+		
+		Ancienne version pour comparer:
+		<img src="./flipbook.PNG" alt =" " onclick="zoompic(event)">
+		
+		Dans la nouvelle version on a le modulo et l'arrondi automatiques dans le node flipbook.
+		
+		Je vous mets les vidéos de cours, qui expliquent l'ancienne version:
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/B6pC-Ay3hqo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 			0:00 - intro
 			1:20 - posterize
@@ -901,8 +889,9 @@ pre {
 			22:14 alpha
 			23:15 correction de boucle
 			24:37 outro
-		//todo
-		
+
+</pre><h2>Transparence et Blending</h2><pre>
+	///todo	
 </pre><h2>Éclairage direct</h2><pre>
 	<a href="https://docs.google.com/document/d/1pkAA0FkpNavgtoPLtIk4Z-p3iFoPKCcclpU_e-i6BH8/edit?usp=sharing">DOC DE COURS</a>
 	
@@ -944,7 +933,8 @@ pre {
 				//todo
 			-Round()
 				//todo
-	//todo
+	-Séparer la luminosité et la couleur
+		//todo
 			
 </pre><h2>Outlines</h2><pre>
 	//todo 	
@@ -977,7 +967,6 @@ pre {
 		
 </pre><h2>Dithering</h2><pre>
 	//todo link video
-	
 </pre><h2>Eau</h2><pre>
 	//todo
 	-sur le Pipeline Asset, cocher Depth Texture et Opaque Texture
