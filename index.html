@@ -71,6 +71,8 @@ pre {
   /*scale: 500%;*/
   max-width: 70%;
   max-height: 70%;
+  width: auto;
+  height: auto;
 }
 
 /* Caption of Modal Image */
@@ -124,6 +126,7 @@ pre {
   <!-- <div id="caption"></div> -->
 </div>
 
+PAGE TESTÉE SUR FIREFOX 95 SUR WIN10
 <h1>Recap Programmation Graphique</h1>
 <pre>
 	Cette page est incomplète, et en principe les informations importantes sont ajoutées au fur et à mesure.
@@ -618,19 +621,245 @@ pre {
 			-Espace
 			-Clic droit > Create node		
 		</div>
-</pre><h2>ShaderLab</h2><pre>
-	//todo
-	
-	<h3>	Workflow de création de shader</h3>
-		//todo
-		-pipeline built-in (BIRP) vs URP vs HDRP
-			//todo
-			//todo poster le lien vers le template URP
-	
-	<h3>	Structure des fichiers</h3>
-		//todo
+</pre><h2>ShaderLab [Game Prog only]</h2><pre>
+	<h3>	I) Choix de Pipeline : built-in (BIRP) - URP - HDRP</h3>		
+		Le pipeline dit "built-in" (BIRP) est celui par défaut qu'on a quand on crée un projet vierge avec aucun template, ou un template 3D basique.
 		
-	<h3>	API et docs</h3>
+		Unity propose aussi le système de Scriptable Render Pipeline (SRP), qui permet d'utiliser un moteur de rendu fait maison ; 
+		et ils mettent à disposition deux moteurs pré-construits :
+			-Universal Render Pipeline - URP ; anciennement nommé LightWeight RP, LWRP
+			-High Definition Render Pipeline - HDRP (qu'on va ignorer)
+		
+		Le choix de render pipeline impacte notre workflow :
+			-les SRP nous permettent d'utiliser ShaderGraph
+			-URP fonctionne sur mobile
+			-ça change quelles features graphiques sont disponibles mais on va pas s'en soucier		
+			-ça impacte le format des fichiers de shader script qu'on va utiliser
+			
+		On peut comparer les deux templates de shader "vides" par défaut entre BIRP, et URP :
+			
+			<img src="./birp_default.PNG" alt =" " onclick="zoompic(event)">	<img src="./urp_template.PNG" alt =" " onclick="zoompic(event)">
+			
+		cf la section suivante pour les obtenir.
+	
+	<h3>	II) Créer et appliquer un shader</h3>
+		Dans le BIRP, pour créer un shader script, on peut passer par Assets > Create > Shader > Unlit Shader, ou Standard Surface Shader
+			<img src="./create_birp.png" alt =" " onclick="zoompic(event)">
+		
+		Dans URP, pour créer un shader <i>script</i>, on a pas d'option dans l'interface, on a que des options pour créer des graphs :
+			<img src="./create_urp.jpg" alt =" " onclick="zoompic(event)">
+		
+		La doc de unity indique qu'on devrait utiliser shadergraph (??) :
+			<img src="./doc_use_sg.jpg" alt =" " onclick="zoompic(event)">
+			
+		sauf que non, on peut tout à fait écrire des shader scripts, 
+		il faut juste aller chercher un template de shader dans la doc : 
+			<a href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@8.2/manual/writing-shaders-urp-unlit-texture.html">https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@8.2/manual/writing-shaders-urp-unlit-texture.html</a>
+		
+		(Apparemment on est plusieurs à trouver ça abberant, donc quelqu'un a écrit un pti plugin pour ajouter un bouton create dans l'UI : 
+			<a href="https://github.com/KageKirin/CreateURPShaders">https://github.com/KageKirin/CreateURPShaders</a>)
+		
+		Après, ce template de code, il faut le copier-coller dans un fichier existant.
+		Vous pouvez écraser le contenu d'un shader BIRP, ou sinon créer un fichier .txt dans l'explorer de fichiers, et le renomer en .shader
+			
+		Aussi, techniquement, les shaders BIRP fonctionnent dans URP si ils sont basiques :
+			<img src="./birp_in_urp.PNG" alt =" " onclick="zoompic(event)">
+		Et ils coincent quand on veut interagir avec le système d'éclairage (magenta == cassé, mais cf l'ombre portée) : 
+			<img src="./birp_in_urp_shadow.PNG" alt =" " onclick="zoompic(event)">
+		
+		Pour compiler les shaders, typiquement, on a juste besoin de revenir dans Unity, et ça compile auto très rapidement.
+		Ça recompile même pendant que le jeu tourne, donc c'est pratique pour itérer.
+		Dans d'autres moteurs, par exemple du fait-main en C++, il faut faire compiler les shaders au runtime en passant le contenu des fichiers shader en tant que string à une fonction de compilation.
+		
+		Par contre si y'a des erreurs, il faut faire attention, elles se comportent différemment dans la console :
+			-les erreurs sont pas bloquantes pour lancer le jeu
+			-mais si vous faites clear et que les erreurs de shader disparaissent de la console, en fait elles sont toujours là
+			-pour voir les erreur de shader disparues, vous pouvez faire un changement dans le shader pour forcer à recompiler
+		
+		Ensuite pour appliquer les shaders sur les Materials : 
+			-Créer un material
+				<img src="./create_mat.png" alt =" " onclick="zoompic(event)">
+			-Le shader est applicable en faisant un drag'n'drop de l'asset shader sur l'asset material
+			-Sinon on peut choisir le shader dans le menu dépliant dans l'Inspector du material (j'explique le rangement des shaders plus loin) :
+				<img src="./mat_shader_dropdown.png" alt =" " onclick="zoompic(event)">
+				
+		Et finalement, pour appliquer le material sur un GameObject :
+			-Vous pouvez faire un drag'n'drop du material sur le GameObject
+			-Ou un drag'n'drop du material dans le champ material du Mesh Renderer dans l'inspector du GameObject :
+				<img src="./mat_to_go.png" alt =" " onclick="zoompic(event)">
+				
+		Voilà le setup, on a un shader sur un material sur un GameObject dans notre scène.
+		Ensuite concrètement on passe plus de temps à écrire des shaders qu'à les créer/placer, donc allons voir comment faire ça.
+	
+	<h3>	III) Structure des fichiers</h3><h4>		a) ShaderLab vs HLSL</h4>		On travaille avec URP, à partir du template de shader "vide" donné par la doc plus haut.
+		Je vous remets le lien :
+			<a href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@8.2/manual/writing-shaders-urp-unlit-texture.html">https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@8.2/manual/writing-shaders-urp-unlit-texture.html</a>
+			
+		Le langage de programmation utilisé pour écrire des shaders dans Unity, c'est typiquement le HLSL.
+		Par contre on a une sur-couche spécifique à Unity autour du HLSL, qu'on appelle ShaderLab.
+		On peut voir la distinction entre ces deux parties :
+			<img src="./hlslprogram.jpg" alt =" " onclick="zoompic(event)">
+		Les tags HLSLPROGRAM et ENDHLSL délimitent la partie HLSL du code.
+		(Dans BIRP, c'est des tags CGPROGRAM, mais c'est du HLSL aussi en fait.)
+		La partie HLSL est assez classique et comparable à ce qu'on aurait dans des shaders utilisés dans d'autres moteurs.
+		Ce qu'on a autour de ça c'est ShaderLab, qui s'occupe des Properties, Subshaders, Tags et Passes.
+		
+		<h4>		b) structure shaderlab</h4>			<img src="./shaderlab_format.png" alt =" " onclick="zoompic(event)">
+		Les parties spécifiques au format ShaderLab sont donc:
+			-Nom et dossier du shader
+				cf plus loin
+			-Properties
+				cf plus loin
+			-Subshaders
+				-on va pas en parler, mais pour simplifier, on va dire que ça sert à écrire des variantes du shader compatibles avec différentes plateformes
+			-Tags
+				cf plus loin
+			-Passes
+				-on va aussi les ignorer, mais ça sert à faire render le shader différemment dans différents contextes particuliers, 
+				par exemple lors des calculs de shadowmapping, ou des rendus intermédiaires depth-only, etc.
+		<h4>		c) Nom et dossier</h4>		La ligne tout en haut du shader nous permet de donner un nom au shader, et de le catégoriser dans un dossier :
+			<img src="./shader_name.png" alt =" " onclick="zoompic(event)">
+		Le dossier dans lequel on le range est pertinent pour le menu dépliant dans l'inspector :
+			<img src="./shader_folder.png" alt =" " onclick="zoompic(event)">    <img src="./shader_subfolder.PNG" alt =" " onclick="zoompic(event)">		 
+		<h4>		d) Properties</h4><h5>			shader vs material properties</h5>			Ensuite on a les Properties, qui nous laissent définir des valeurs qu'on peut alimenter depuis l'extérieur du shader :
+				<img src="./shader_properties.png" alt =" " onclick="zoompic(event)">
+			Elles sont typiquement set depuis l'éditeur, par les users, via le material :
+				<img src="./material_properties.png" alt =" " onclick="zoompic(event)">
+			Alors, il y a un piège, et un point à bien comprendre ici ^ ...
+		
+			Il faut faire la distinction entre : 
+				-les valeurs de properties dans le shader
+				-les valeurs de properties sur le material
+		
+			En fait, les valeurs de properties choisies dans le code du shader sont seulement des valeurs par défaut, qui s'appliquent au material à sa création.
+			Mais une fois que le material a été créé, il a ses propres valeurs de properties, et ce sont celles-ci qui comptent.
+		
+			Au cas où la distinction entre material et shader est pas claire :
+				-le shader c'est un script qui décrit la logique du rendu
+				-le material <i>utilise</i> un shader pour être rendu, et il contient une liste de valeurs de properties à donner au shader au moment de se faire render
+			Par exemple, on peut avoir : 
+				-un shader de rendu de cheveux, qui peut contenir une logique assez technique
+				-50 materials de cheveux qui utilisent tous ce même shader, mais avec plein de couleurs différentes, c'est à dire des valeurs de Property "color" différentes 
+			
+				(En vrai en pratique on utiliserait des MaterialPropertyBlocks pour avoir 1 seul material, et ça ferait juste varier la couleur à chaque draw call, mais passons.)			
+			<h5>			déclarations hlsl</h5>			En fait pour utiliser des Properties dans notre shader, il faut aussi que la partie HLSL ait une déclaration des properties en tant que variables :
+				<img src="./property_decl.png" alt =" " onclick="zoompic(event)">
+			Ici on a notre property texture "_BaseMap" déclarée à la fois tout en haut en tant que Property ShaderLab, 
+				(<a href="https://docs.unity3d.com/2021.1/Documentation/Manual/SL-Properties.html">cf la doc pour comprendre la syntaxe</a> mais en gros c'est nom_pour_le_code("nom_pour_les_users", Type) = "valeur_par_défaut")
+			
+			et ensuite au milieu en tant que variable HLSL, avec une syntaxe un peu compliquée :
+				La syntaxe CBUFFER_START(...) ... CBUFFER_END, 
+					sert à améliorer les performances en rendant possible un certain type de batching dans URP si vous déclarez certaines variables dedans,
+					mais ça fonctionera quand même si vous déclarez en dehors, tant que c'est déclaré avant la fonction vert().
+				
+				La syntaxe de déclaration de variables de type texture est un peu arbitraire, 
+					pour déclarer une texture "blabla" Unity utilisent : 
+						deux macros : 
+							-TEXTURE2D(blabla) 
+							-SAMPLER(sampler_blabla)
+							(l'usage de macros ici c'est pour assurer la compatibilité du code avec différentes plateformes, dans notre cas c'est équivalent à Texture2D blabla et SamplerState samplerblabla)
+								<img src="./macros_def.png" alt =" " onclick="zoompic(event)">
+						une déclaration de variable 
+							-float4 blabla_ST;
+			Pour la plupart des autres types de properties, par exemple float, ou color, ça sera plus simple, juste besoin de déclarer :
+				float blabla; 
+				half4 couleur;
+				En fait vous pouvez généralement utiliser la syntaxe de déclaration d'origine de BIRP pour les autres types de properties (sauf bumpmap et CUBE, c'est des textures aussi), 
+					<a href="https://docs.unity3d.com/2021.1/Documentation/Manual/SL-SurfaceShaderExamples.html">cf cette page de doc avec des exemples.</a>
+					Par exemple, voilà où j'ai trouvé la syntaxe pour déclarer la propriété color :
+						<img src="./birp_color.png" alt =" " onclick="zoompic(event)">
+						<h5>			exemple color</h5>			Ajoutons une property color pour voir :
+				<img src="./color_shaderlab_error.png" alt =" " onclick="zoompic(event)">
+				et aussi float4 _MyColor; dans la section CBUFFER.
+				
+				Résultat?
+				<img src="./property_order_error.png" alt =" " onclick="zoompic(event)">
+				Notre code est techniquement valide, mais Unity lance ce type d'erreur bizarre de nos jours ^
+				
+				En fait il faut juste changer l'ordre de définition des Properties, on met notre couleur en premier :
+				<img src="./color_shaderlab.png" alt =" " onclick="zoompic(event)">
+				
+				On peut utiliser la variable dans la fonction frag() pour que ça serve :
+				<img src="./color_hlsl_var.png" alt =" " onclick="zoompic(event)">    <img src="./color_property_ui.jpg" alt =" " onclick="zoompic(event)">
+		<h4>		e) Tags, Blend et Cull</h4>			L'usage le plus courant des Tags c'est de définir si notre shader est opaque ou transparent.
+				<img src="./alpha_shader.png" alt =" " onclick="zoompic(event)">
+			Pour avoir de la transparence dans notre shader on doit :
+				-set le Tag "RenderType" = "Transparent", 
+					(et possiblement ajouter un tag "Queue" = "Transparent" à côté en cas de problème, par exemple si un shader transparent clignote quand on le regarde avec la skybox derrière).
+				-ajouter une ligne "Blend SrcAlpha OneMinusSrcAlpha" entre la ligne Tags et la ligne Pass
+				-choisir une valeur d'alpha dans le frag shader en bas, par exemple color.a = 0.5;
+				<img src="./alpha_code.png" alt =" " onclick="zoompic(event)">
+				
+			La page de doc pour les tags est ici, cf la section Queue tag : 
+				<a href="https://docs.unity3d.com/Manual/SL-SubShaderTags.html">https://docs.unity3d.com/Manual/SL-SubShaderTags.html</a>
+			
+			La page de doc pour le keyword Blend est ici, cf la section "Common blend types" : 
+				<a href="https://docs.unity3d.com/Manual/SL-Blend.html">https://docs.unity3d.com/Manual/SL-Blend.html</a>
+				
+			Pour faire des shaders de cut-out on utilise le RenderType "AlphaTest" + la Queue "AlphaTest" aussi.
+			Normalement c'est plus performant.
+				<img src="./lava_cutout.png" alt =" " onclick="zoompic(event)">    <img src="./cutout_code.png" alt =" " onclick="zoompic(event)">    <img src="./cutout_queue.png" alt =" " onclick="zoompic(event)">
+			
+			On peut utiliser la fonction clip(float) pour cut-out des pixels transparents entièrement,
+			en fait ça fait pas que les rendre transparents, 
+			ça fait aussi que le shader ignore les calculs suivants, pour économiser des performances.			
+			clip prend typiquement (ma_couleur - mon_seuil_clipping) en paramètre, et si cette valeur est négative, ça clip le fragment.
+			
+			En parlant de transparence, si vous voulez activer le rendu des backfaces,
+			vous pouvez ajouter la ligne "Cull Off" entre Tags et Pass :
+			<img src="./cull.png" alt =" " onclick="zoompic(event)">
+			Le keyword Cull peut être combiné avec d'autres options, par exemple "Cull Front" n'affichera que les backfaces, et coupera les front faces.
+		<h4>		f) vertex shader et fragment shader HLSL</h4><h5>			structure</h5>			Dans la partie HLSL du shader, on a 5 parties, dont 4 qui correspondent à des étapes du rendu 
+			(la partie déclaration de Properties sert juste à rendre accessible les properties).
+				<img src="./hlsl_format.png" alt =" " onclick="zoompic(event)">				
+			On peut regarder un shader de BIRP pour comparer, la même logique s'applique mais les structs ont des noms différents :
+				<img src="./birp_flow.png" alt =" " onclick="zoompic(event)">
+				
+			En revanche, les sections ne sont pas listées dans l'ordre du déroulement du rendu, donc le flux d'exécution est comme ça :
+				<img src="./hlsl_flow.png" alt =" " onclick="zoompic(event)">
+					-Attributes, qui sert à obtenir les données des vertices de notre mesh, et sert d'input au vertex shader qui le suit				
+					-Le vertex shader, qui sert à projeter nos vertices d'object-space à clip-space, et à définir certaines propriétés par vertex
+					-Varyings, qui sert d'output au vertex shader, et d'input au fragment shader
+					-Le fragment shader, qui sert à colorier nos fragments/pixels
+				
+				En fait, la section Varyings doit être définie avant le vertex shader pour qu'il puisse s'en servir.
+				En HLSL le compilateur sait pas aller regarder plus loin pour trouver des définitions de variables ou fonctions.
+				(Probablement pour des raisons de performance.)
+				<h5>			données des vertices</h5>			Les keywords comme " : POSITION" après "float4 positionOS" dans Attributes, on appelle ça des Semantics.
+				Ça sert à réclamer les informations des vertices du mesh à DirectX. (HLSL c'est le language de shading de Direct3D).
+				On définit une variable qui recevra la valeur qu'on réclame. 
+				On peut la nommer comme on veut, tant que le tag sémantique correspond au type.				
+					<a href="https://docs.unity3d.com/Manual/SL-VertexProgramInputs.html">cf la doc des semantics.</a>
+					particulièrement cette section :
+						<img src="./semantics.png" alt =" " onclick="zoompic(event)">
+						Les vecteurs sont en object-space.
+					<a href="https://docs.unity3d.com/Manual/SL-ShaderSemantics.html">cf autre page avec des exemples.</a>
+					
+				La struct Attributes sert d'input au vertex shader, en tant que paramètre de la fonction vert().
+				<h5>			vertex shader et varyings</h5>				La fonction vert est déclarée en tant que vertex shader par la ligne #pragma vertex vert en haut.
+				La fonction vert() est appelée pour chaque vertex de notre mesh,
+				et elle travaillera à partir de la position, uv, normale, etc. de notre vertex.
+					<img src="./vert_input.png" alt =" " onclick="zoompic(event)">
+					
+				Le vertex shader projète la position du vertex avec la fonction TransformObjectToHClip(), et stocke le résultat dans une struct de type Varyings créée puis returned par vert() :
+					<img src="./vert_output.png" alt =" " onclick="zoompic(event)">
+					Projeter les vertices, c'est le minimum qu'on attend de la part du vertex shader, tout le reste est optionel.
+					Son autre rôle c'est de préparer certaines valeurs pour le fragment shader suivant.
+					
+				Certaines valeurs dans Varyings ont des semantics aussi.
+				Le système veut connaître au moins la position de nos vertices après la projection, 
+				et comme on peut avoir plusieurs variables définies dans Varyings, le système veut savoir laquelle regarder, 
+				d'où le tag SV_POSITION derrière float4 positionHCS;
+				<h5>			fragment shader</h5>				<img src="./frag_input.png" alt =" " onclick="zoompic(event)">
+				La struct de type Varyings returned par le vertex shader est passée en paramètre au fragment shader.
+				
+				Chacun de nos fragments est juste un point sur notre mesh visible à l'écran. 
+				On peut déterminer sa couleur, son opacité.
+				On peut aussi le clip.
+				La couleur peut venir d'une texture, ou être calculée, etc.
+				Le fragment shader renvoie typiquement une couleur en RGBA, avec des valeurs à virgule entre 0 et 1 
+				(mais qui peuvent aussi sortir de l'intervalle [0;1], c'est utile pour le rendu HDR. Par contre gardez votre alpha entre 0 et 1, sinon le rendu casse).
+	<h3>	IV) API, docs, HLSL</h3>
 		//todo	
 
 </pre><!-- <h2>Shaders de debug</h2><pre>
