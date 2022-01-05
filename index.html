@@ -656,7 +656,7 @@ PAGE TESTÉE SUR FIREFOX 95 SUR WIN10
 		il faut juste aller chercher un template de shader dans la doc : 
 			<a href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@8.2/manual/writing-shaders-urp-unlit-texture.html">https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@8.2/manual/writing-shaders-urp-unlit-texture.html</a>
 		
-		(Apparemment on est plusieurs à trouver ça abberant, donc quelqu'un a écrit un pti plugin pour ajouter un bouton create dans l'UI : 
+		(Apparemment on est plusieurs à trouver ça aberrant, donc quelqu'un a écrit un pti plugin pour ajouter un bouton create dans l'UI : 
 			<a href="https://github.com/KageKirin/CreateURPShaders">https://github.com/KageKirin/CreateURPShaders</a>)
 		
 		Après, ce template de code, il faut le copier-coller dans un fichier existant.
@@ -720,10 +720,11 @@ PAGE TESTÉE SUR FIREFOX 95 SUR WIN10
 		<h4>		c) Nom et dossier</h4>		La ligne tout en haut du shader nous permet de donner un nom au shader, et de le catégoriser dans un dossier :
 			<img src="./shader_name.png" alt =" " onclick="zoompic(event)">
 		Le dossier dans lequel on le range est pertinent pour le menu dépliant dans l'inspector :
-			<img src="./shader_folder.png" alt =" " onclick="zoompic(event)">    <img src="./shader_subfolder.PNG" alt =" " onclick="zoompic(event)">		 
-		<h4>		d) Properties</h4><h5>			shader vs material properties</h5>			Ensuite on a les Properties, qui nous laissent définir des valeurs qu'on peut alimenter depuis l'extérieur du shader :
+			<img src="./shader_folder.png" alt =" " onclick="zoompic(event)">    <img src="./shader_subfolder.png" alt =" " onclick="zoompic(event)">		 
+		<h4>		d) Properties</h4><h5>			shader vs material properties</h5>			Ensuite on a les Properties, qui nous laissent définir des valeurs qu'on peut alimenter depuis l'extérieur du shader. 
+			Ici on a une déclaration de property texture :
 				<img src="./shader_properties.png" alt =" " onclick="zoompic(event)">
-			Elles sont typiquement set depuis l'éditeur, par les users, via le material :
+			Elles sont typiquement alimentées depuis l'éditeur, par les users, via le material :
 				<img src="./material_properties.png" alt =" " onclick="zoompic(event)">
 			Alors, il y a un piège, et un point à bien comprendre ici ^ ...
 		
@@ -741,7 +742,7 @@ PAGE TESTÉE SUR FIREFOX 95 SUR WIN10
 				-un shader de rendu de cheveux, qui peut contenir une logique assez technique
 				-50 materials de cheveux qui utilisent tous ce même shader, mais avec plein de couleurs différentes, c'est à dire des valeurs de Property "color" différentes 
 			
-				(En vrai en pratique on utiliserait des MaterialPropertyBlocks pour avoir 1 seul material, et ça ferait juste varier la couleur à chaque draw call, mais passons.)			
+				(En vrai en pratique on utiliserait des MaterialPropertyBlocks pour avoir 1 seul material, et ça ferait juste varier la couleur pour chaque objet, mais passons.)			
 			<h5>			déclarations hlsl</h5>			En fait pour utiliser des Properties dans notre shader, il faut aussi que la partie HLSL ait une déclaration des properties en tant que variables :
 				<img src="./property_decl.png" alt =" " onclick="zoompic(event)">
 			Ici on a notre property texture "_BaseMap" déclarée à la fois tout en haut en tant que Property ShaderLab, 
@@ -753,14 +754,24 @@ PAGE TESTÉE SUR FIREFOX 95 SUR WIN10
 					mais ça fonctionera quand même si vous déclarez en dehors, tant que c'est déclaré avant la fonction vert().
 				
 				La syntaxe de déclaration de variables de type texture est un peu arbitraire, 
-					pour déclarer une texture "blabla" Unity utilisent : 
-						deux macros : 
+					pour déclarer une texture "blabla" Unity utilisent :
+						une déclaration de variable dans la section CBUFFER 
+							-float4 blabla_ST;
+						et deux macros avant : 
 							-TEXTURE2D(blabla) 
 							-SAMPLER(sampler_blabla)
-							(l'usage de macros ici c'est pour assurer la compatibilité du code avec différentes plateformes, dans notre cas c'est équivalent à Texture2D blabla et SamplerState samplerblabla)
-								<img src="./macros_def.png" alt =" " onclick="zoompic(event)">
-						une déclaration de variable 
-							-float4 blabla_ST;
+				
+				L'usage de macros ici c'est pour assurer la compatibilité du code avec différentes plateformes, dans notre cas c'est équivalent à Texture2D blabla et SamplerState samplerblabla
+					<img src="./macros_def.png" alt =" " onclick="zoompic(event)">
+					Si vous savez pas comment les macros #define fonctionnent :
+						Les langages C, C++, HLSL et plein d'autres, ont une étape de pré-compilation, 
+						où le "pre-processor" va appliquer des changements au texte du code en fonction des différentes macros dans le code.
+						Une ligne avec "#define AAA BBB" va remplacer toutes les occurrences de AAA par BBB ;
+						Mais en bonus, les macros #define peuvent avoir des paramètres,
+						donc dans notre cas le #define TEXTURE2D(textureName) Texture2D textureName va réarranger le texte autour de textureName, 
+						pour que ça devienne une déclaration de variable et pas un appel de fonction.
+						
+						
 			Pour la plupart des autres types de properties, par exemple float, ou color, ça sera plus simple, juste besoin de déclarer :
 				float blabla; 
 				half4 couleur;
@@ -809,6 +820,7 @@ PAGE TESTÉE SUR FIREFOX 95 SUR WIN10
 			vous pouvez ajouter la ligne "Cull Off" entre Tags et Pass :
 			<img src="./cull.png" alt =" " onclick="zoompic(event)">
 			Le keyword Cull peut être combiné avec d'autres options, par exemple "Cull Front" n'affichera que les backfaces, et coupera les front faces.
+			Je vous linkerais bien la doc mais elle en dit pas plus que ça ^.
 		<h4>		f) vertex shader et fragment shader HLSL</h4><h5>			structure</h5>			Dans la partie HLSL du shader, on a 5 parties, dont 4 qui correspondent à des étapes du rendu 
 			(la partie déclaration de Properties sert juste à rendre accessible les properties).
 				<img src="./hlsl_format.png" alt =" " onclick="zoompic(event)">				
@@ -860,7 +872,123 @@ PAGE TESTÉE SUR FIREFOX 95 SUR WIN10
 				Le fragment shader renvoie typiquement une couleur en RGBA, avec des valeurs à virgule entre 0 et 1 
 				(mais qui peuvent aussi sortir de l'intervalle [0;1], c'est utile pour le rendu HDR. Par contre gardez votre alpha entre 0 et 1, sinon le rendu casse).
 	<h3>	IV) API, docs, HLSL</h3>
-		//todo	
+		Documentation officielle de HLSL : <a href="https://docs.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-reference">https://docs.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-reference</a>
+			Disponible en français : <a href="https://docs.microsoft.com/fr-fr/windows/win32/direct3dhlsl/dx-graphics-hlsl-reference">https://docs.microsoft.com/fr-fr/windows/win32/direct3dhlsl/dx-graphics-hlsl-reference</a>
+		
+		Pour explorer le fonctionnement du code shader spécifique à URP et SRP, les docs sont très légères malheureusement, 
+		donc je vous recommande surtout de lire le code source directement.
+		
+		Pour vous y retrouver dans le code source de URP/SRP/ShaderLab,
+		vous pouvez commencer par accéder au fichier qui est #include par défaut dans les shaders URP :
+			<img src="./include.png" alt =" " onclick="zoompic(event)">
+			Si vous savez pas ce que fait #include :
+				#include AAA copie-colle le contenu du fichier AAA à la place de la ligne #include.
+				ça permet donc d'importer du code existant au lieu d'avoir à le réécrire.
+			
+		Pour accéder aux fichiers source dans les packages, 
+		vous pouvez utiliser la fontion recherche de la fenêtre Project :
+			<img src="./asset_search.jpg" alt =" " onclick="zoompic(event)">
+			-Assurez-vous d'avoir le toggle Search sur "All" ou "In Packages", et pas "In Assets".
+			-Attention, il peut y avoir plusieurs fichiers avec le même nom qui sont listés,
+			sélectionnez un fichier de la liste et regardez son addresse de fichier en bas pour s'assurer qu'il vient du bon dossier.
+			Par exemple on peut facilement confondre les fichiers de SRP et les fichiers de URP.
+			-Double clic pour ouvrir le fichier.
+		
+		On peut aller creuser un peu le code pour s'informer, 
+			par exemple aller chercher le code de la fonction TransformObjectToHClip(float3) qui fait la projection des vertices.
+		
+			Comment la retrouver ? 
+				-On a l'option d'ouvrir tous les fichiers .hlsl de URP et SRP dans visual studio et ensuite de faire Ctrl-F sur les fichiers ouverts, 
+					mais c'est lourd, et y'a plus malin.
+				-On peut ajouter les dossier source à la solution de Visual Studio, et ça permettra de Ctrl-F dedans sans tout ouvrir :
+					-Ouvrir l'explorateur de solution de Visual Studio (2019 là)
+						<img src="./solution_explorer.PNG" alt =" " onclick="zoompic(event)">
+					-Naviguer vers Library/PackageCache/ render-pipelines.core et render-pipelines.universal
+						<img src="./find_srp_urp.PNG" alt =" " onclick="zoompic(event)">
+					-Sélectionnez leurs sous-dossiers ./ShaderLibrary avec ctrl-click pour avoir les 2, et clic-droit > "Inclure dans le projet" 
+					(en principe il faut aussi ajouter les autres dossiers, comme ./Editor, certains fichiers source s'y trouvent)
+						<img src="./include_in_project.png" alt =" " onclick="zoompic(event)">
+					-Si vous les voyez en jaune, ils sont inclus
+						<img src="./yellow_folder.PNG" alt =" " onclick="zoompic(event)">
+					-Vous pouvez maintenant faire Ctrl-F, et dans le menu de recherche,
+						<img src="./search_in_solution.png" alt =" " onclick="zoompic(event)">
+						chercher dans Solution Complète, et Rechercher Tout
+					-Dans le panneau résultat, ça nous indique que la fonction est définie dans ./ShaderLibrary/SpaceTransform.hlsl de SRP
+						<img src="./search_find.PNG" alt =" " onclick="zoompic(event)">
+					-En double-cliquant, ça ouvre sur la fonction
+						<img src="./proj_func.png" alt =" " onclick="zoompic(event)">
+					-On peut voir que les fonctions appelées dedans renvoient des variables globales de type float4x4 (matrices)
+						<img src="./matrix_funcs.jpg" alt =" " onclick="zoompic(event)">
+						Les variables globales sont listées sur cette page de doc :
+							<a href="https://docs.unity3d.com/Manual/SL-UnityShaderVariables.html">https://docs.unity3d.com/Manual/SL-UnityShaderVariables.html</a>
+					
+		Une autre façon d'en apprendre sur la programmation de shader dans Unity,
+		c'est de faire des shaders avec ShaderGraph, et de lire le code généré.
+		Sur les versions récentes, c'est ici :
+			<img src="./sg_code.png" alt =" " onclick="zoompic(event)">
+			Par contre le code généré est un peu difficile à lire,
+			Il a des étapes supplémentaires et une astuce de construction à comprendre.
+			Le fichier généré contient plusieurs subshaders, qui ont plusieurs passes chaque.
+			Mais typiquement seulement la première passe du premier subshader nous intéresse :
+				<img src="./sg_structure.PNG" alt =" " onclick="zoompic(event)">
+			Le vertex et fragment shader ne font pas partie du code généré, 
+			et sont ajoutés avec un #include à la fin de la passe :
+				<img src="./sg_includes.PNG" alt =" " onclick="zoompic(event)">
+			Et en fait, la logique de notre shadergraph est contenue dans les fonctions
+				-SurfaceDescriptionFunction()
+				-VertexDescriptionFunction()
+					<img src="./sg_logic.PNG" alt =" " onclick="zoompic(event)">
+			Pour donner une idée du flux de la logique des shader graphs :
+				<img src="./sg_flow.PNG" alt =" " onclick="zoompic(event)">
+			
+		Bien sûr, c'est plus facile de lire le code source si on connait bien le langage HLSL.
+		Le plus simple c'est de lire des exemples de code HLSL et d'essayer de faire des changements.
+		Mais il y a quelques éléments bons à savoir dès le départ.
+			
+			HLSL possède des variables de type vecteur et matrice:
+				float4, float3, float2
+				half4, etc.
+				fixed4, etc.				
+				float4x4, float3x3
+				
+				float4 c'est l'équivalent de Vector4, ou encore vec4 en GLSL.
+			
+				on peut lire ses composants avec .x, .y, .z, .w, ou .r, .g, .b, .a, interchangeablement.
+				
+				Le type float est considéré "haute précision" avec 4 octets (typiquement),
+					c'est typiquement utilisé pour les positions 3D et les UVs.
+				Le type half, c'est float mais avec 2 octets au lieu de 4,
+					c'est typiquement utilisé pour les couleurs destinées à être vues.
+				Le type fixed, a une virgule fixe, et c'est considéré "basse précision".
+				
+			On a le SWIZZLING, 
+			qui permet de sélectionner et mélanger des composants pour faire un nouveau vecteur :
+				float4 A = float4(1,2,3,4);
+				float2 B = A.zx;
+				^ ça mettra A.z dans B.x, et A.x dans B.y, donc B vaut (3,1).
+					
+			Quand on définit un vecteur, il faut typiquement lister tous les composants :
+				float4 a = float4(0); //échoue généralement
+				float4 a = float4(0,0,0,0); //fonctionne
+				
+			On a pas de mot-clé "new" en HLSL.
+			Écrire float4(1,3,3,7) n'importe où sert de valeur de type vecteur,
+			et rentre dans des expressions sans problème.
+			
+			On peut aussi lire des valeurs de vecteurs dans des expressions sans problème, donc
+				(vecA + vecB).xyz //est un vecteur valide
+				
+				concrètement :
+				float4 a = (float4(0,0,0,0) + float4(0,1,2,3)).xyzw; //fonctionne
+				^ ici on déclare 2 vecteurs anonymes, 
+				on les additionne, 
+				on lit les 4 composants du résultat (sans swizzling particulier),
+				et on écrit ça dans une variable vecteur "a".
+		
+			Contrairement au GLSL, on peut pas multiplier des vecteurs et matrices avec (matriceA * vecteurB),
+			on doit appeler la fonction mul(matrice, vecteur).
+			
+			Oubliez pas de vérifier si les matrices sont en row-major ou column-major.
 
 </pre><!-- <h2>Shaders de debug</h2><pre>
 	//todo
